@@ -23,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
- <html lang="pt-BR">
+    <html lang="pt-BR">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased flex min-h-screen bg-gray-50 text-gray-900`}>
         
         {/* MENU LATERAL */}
