@@ -9,9 +9,9 @@ interface LogoProps {
 
 export function Logo({ collapsed = false, className, size = "md" }: LogoProps) {
   const iconSizes = {
-    sm: "w-8 h-8",
-    md: "w-10 h-10",
-    lg: "w-12 h-12",
+    sm: "w-9 h-9",
+    md: "w-11 h-11",
+    lg: "w-14 h-14",
   };
 
   return (
@@ -22,125 +22,119 @@ export function Logo({ collapsed = false, className, size = "md" }: LogoProps) {
         className
       )}
     >
-      {/* Ícone Vetorial Inspirado em Livro Técnico + Código */}
+      {/* Container do Ícone Vetorial */}
       <div
         className={cn(
           iconSizes[size],
-          "relative shrink-0 rounded-xl flex items-center justify-center p-1 transition-all duration-300",
+          "relative shrink-0 rounded-xl flex items-center justify-center p-1.5 transition-all duration-300",
           "bg-gradient-to-br from-zinc-900 via-zinc-950 to-zinc-900",
-          "border border-blue-500/30 hover:border-cyan-400/60",
-          "shadow-[0_0_15px_rgba(59,130,246,0.15)] group-hover:shadow-[0_0_24px_rgba(56,189,248,0.4)]",
+          "border border-cyan-500/40 hover:border-cyan-400",
+          "shadow-[0_0_18px_rgba(56,189,248,0.2)] group-hover:shadow-[0_0_28px_rgba(56,189,248,0.45)]",
           "group-hover:scale-105"
         )}
       >
         {/* Glow de fundo */}
-        <div className="absolute inset-0 rounded-xl bg-gradient-to-tr from-blue-600/20 via-cyan-500/20 to-emerald-500/10 opacity-75 blur-[2px] group-hover:opacity-100 transition-opacity" />
+        <div className="absolute inset-0 rounded-xl bg-gradient-to-tr from-cyan-500/20 via-blue-500/20 to-emerald-500/15 opacity-80 blur-[2px] group-hover:opacity-100 transition-opacity" />
 
-        {/* SVG Livro Aberto com Tags e Código */}
+        {/* SVG Exclusivo Livro de Código Nítido (Base 100x100) */}
         <svg
-          viewBox="0 0 64 64"
+          viewBox="0 0 100 100"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-full relative z-10 drop-shadow-[0_2px_10px_rgba(56,189,248,0.4)]"
+          className="w-full h-full relative z-10 drop-shadow-[0_2px_8px_rgba(56,189,248,0.5)]"
         >
-          <defs>
-            <linearGradient id="tn-brand-grad" x1="4" y1="4" x2="60" y2="60" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor="#38BDF8" />
-              <stop offset="50%" stopColor="#6366F1" />
-              <stop offset="100%" stopColor="#10B981" />
-            </linearGradient>
-            <linearGradient id="tn-line-grad" x1="10" y1="10" x2="54" y2="54" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor="#67E8F9" />
-              <stop offset="100%" stopColor="#3B82F6" />
-            </linearGradient>
-          </defs>
-
           {/* Tag de Código Topo: < > */}
           <path
-            d="M 23 9 L 17 14 L 23 19"
-            stroke="url(#tn-line-grad)"
-            strokeWidth="2.75"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M 41 9 L 47 14 L 41 19"
-            stroke="url(#tn-line-grad)"
-            strokeWidth="2.75"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-
-          {/* Camada Traseira / Capa Externa do Livro */}
-          <path
-            d="M 7 28 L 7 51 C 18 45 28 47 32 55 C 36 47 46 45 57 51 L 57 28"
-            stroke="url(#tn-brand-grad)"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeOpacity="0.75"
-          />
-
-          {/* Livro Aberto Principal - Páginas */}
-          <path
-            d="M 12 25 L 12 48 C 21 43 28 45 32 53 C 36 45 43 43 52 48 L 52 25 C 43 20 36 22 32 24 C 28 22 21 20 12 25 Z"
-            stroke="url(#tn-brand-grad)"
-            strokeWidth="2.75"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-
-          {/* Linha Central do Livro (Lombada) */}
-          <path
-            d="M 32 24 L 32 53"
-            stroke="url(#tn-brand-grad)"
-            strokeWidth="2.75"
-            strokeLinecap="round"
-          />
-
-          {/* PÁGINA ESQUERDA: Chaves e Código */}
-          {/* Chave { */}
-          <path
-            d="M 17 30 C 15.5 30 15.5 31 15.5 32 C 15.5 33 14.5 33.5 13.5 33.5 C 14.5 33.5 15.5 34 15.5 35 C 15.5 36 15.5 37 17 37"
+            d="M 37 14 L 27 22 L 37 30"
             stroke="#38BDF8"
-            strokeWidth="2"
+            strokeWidth="5"
             strokeLinecap="round"
+            strokeLinejoin="round"
           />
-          {/* Linhas de Código */}
-          <path d="M 19 31 H 26" stroke="#38BDF8" strokeWidth="2" strokeLinecap="round" />
-          <path d="M 19 34 H 24" stroke="#38BDF8" strokeWidth="2" strokeLinecap="round" />
-
-          {/* Chave } */}
           <path
-            d="M 26 40 C 27.5 40 27.5 41 27.5 42 C 27.5 43 28.5 43.5 29.5 43.5 C 28.5 43.5 27.5 44 27.5 45 C 27.5 46 27.5 47 26 47"
+            d="M 63 14 L 73 22 L 63 30"
             stroke="#38BDF8"
-            strokeWidth="2"
+            strokeWidth="5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+
+          {/* Camada Traseira de Contorno Externa da Capa */}
+          <path
+            d="M 14 42 L 14 78 C 30 70 44 73 50 82 C 56 73 70 70 86 78 L 86 42"
+            stroke="#1E3A8A"
+            strokeWidth="4.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+
+          {/* Páginas do Livro Principal */}
+          <path
+            d="M 20 38 L 20 74 C 32 68 45 70 50 80 C 55 70 68 68 80 74 L 80 38 C 68 32 55 34 50 37 C 45 34 32 32 20 38 Z"
+            fill="#0F172A"
+            stroke="#38BDF8"
+            strokeWidth="4.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+
+          {/* Lombada Central */}
+          <path
+            d="M 50 37 L 50 80"
+            stroke="#38BDF8"
+            strokeWidth="4.5"
             strokeLinecap="round"
           />
-          <path d="M 16 41 H 23" stroke="#38BDF8" strokeWidth="2" strokeLinecap="round" />
-          <path d="M 16 44 H 22" stroke="#38BDF8" strokeWidth="2" strokeLinecap="round" />
 
-          {/* PÁGINA DIREITA: Código, Colchete ] e Ponto e vírgula ; */}
-          <path d="M 37 31 H 46" stroke="#38BDF8" strokeWidth="2" strokeLinecap="round" />
-          <path d="M 37 34 H 43" stroke="#38BDF8" strokeWidth="2" strokeLinecap="round" />
+          {/* PÁGINA ESQUERDA: Chaves e Linhas */}
+          <path
+            d="M 30 46 C 28 46 28 47.5 28 49 C 28 50.5 26.5 51 25.5 51 C 26.5 51 28 51.5 28 53 C 28 54.5 28 56 30 56"
+            stroke="#38BDF8"
+            strokeWidth="4"
+            strokeLinecap="round"
+          />
+          <path d="M 35 48 H 44" stroke="#60A5FA" strokeWidth="4" strokeLinecap="round" />
+          <path d="M 35 53 H 42" stroke="#60A5FA" strokeWidth="4" strokeLinecap="round" />
+
+          <path
+            d="M 42 61 C 44 61 44 62.5 44 64 C 44 65.5 45.5 66 46.5 66 C 45.5 66 44 66.5 44 68 C 44 69.5 44 71 42 71"
+            stroke="#38BDF8"
+            strokeWidth="4"
+            strokeLinecap="round"
+          />
+          <path d="M 27 63 H 37" stroke="#60A5FA" strokeWidth="4" strokeLinecap="round" />
+
+          {/* PÁGINA DIREITA: Código, Colchete ] e Ponto e Vírgula ; */}
+          <path d="M 56 48 H 71" stroke="#60A5FA" strokeWidth="4" strokeLinecap="round" />
+          <path d="M 56 53 H 66" stroke="#60A5FA" strokeWidth="4" strokeLinecap="round" />
 
           {/* Colchete ] */}
-          <path d="M 45 37 H 47.5 V 42 H 45" stroke="#38BDF8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          <path
+            d="M 70 58 H 74 V 66 H 70"
+            stroke="#38BDF8"
+            strokeWidth="4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
 
-          <path d="M 37 39 H 42" stroke="#38BDF8" strokeWidth="2" strokeLinecap="round" />
-          <path d="M 37 43 H 45" stroke="#38BDF8" strokeWidth="2" strokeLinecap="round" />
+          <path d="M 56 62 H 64" stroke="#60A5FA" strokeWidth="4" strokeLinecap="round" />
 
           {/* Ponto e Vírgula ; */}
-          <circle cx="43" cy="46" r="1.2" fill="#38BDF8" />
-          <path d="M 43 47.5 C 43 49 41.5 50 40.5 50.5" stroke="#38BDF8" strokeWidth="1.8" strokeLinecap="round" />
+          <circle cx="68" cy="68" r="2.5" fill="#38BDF8" />
+          <path
+            d="M 68 71 C 68 74 65.5 75.5 64 76"
+            stroke="#38BDF8"
+            strokeWidth="3"
+            strokeLinecap="round"
+          />
         </svg>
       </div>
 
-      {/* Tipografia de Marca */}
+      {/* Tipografia da Marca */}
       {!collapsed && (
         <div className="overflow-hidden transition-opacity duration-200">
           <div className="flex items-center gap-1.5">
-            <span className="font-extrabold text-base tracking-tight text-white group-hover:text-cyan-300 transition-colors">
+            <span className="font-extrabold text-base sm:text-lg tracking-tight text-white group-hover:text-cyan-300 transition-colors">
               Tech<span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent">Notes</span>
             </span>
             <span className="text-[10px] font-mono bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-1.5 py-0.2 rounded font-semibold tracking-wider">
