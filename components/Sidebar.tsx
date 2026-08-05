@@ -92,10 +92,6 @@ interface SidebarProps {
 
 export function Sidebar({ dynamicNotes = [] }: SidebarProps) {
   const pathname = usePathname();
-
-  if (pathname === "/hub" || pathname === "/") {
-    return null;
-  }
   const [isCollapsed, setIsCollapsed] = React.useState(false);
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [searchOpen, setSearchOpen] = React.useState(false);
@@ -211,6 +207,11 @@ export function Sidebar({ dynamicNotes = [] }: SidebarProps) {
       });
     }
   };
+
+  // Se estiver na página inicial ou no Hub, oculta a renderização da Sidebar
+  if (pathname === "/hub" || pathname === "/") {
+    return null;
+  }
 
   return (
     <>
