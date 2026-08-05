@@ -15,6 +15,7 @@ export interface NoteMetadata {
   date: string;
   badge?: string;
   featured?: boolean;
+  status?: "concluido" | "em_progresso" | "rascunho" | "revisao" | string;
 }
 
 export interface NoteItem extends NoteMetadata {
@@ -105,6 +106,7 @@ export function getAllNotes(): NoteMetadata[] {
         date: data.date || "Atualizado recentemente",
         badge: data.badge || "MD",
         featured: data.featured || false,
+        status: data.status || "concluido",
       });
     }
   }
@@ -144,6 +146,7 @@ export function getNoteBySlug(categorySlug: string, slug: string): NoteItem | nu
     date: data.date || "Atualizado recentemente",
     badge: data.badge,
     featured: data.featured || false,
+    status: data.status || "concluido",
     content: cleanContent,
   };
 }
