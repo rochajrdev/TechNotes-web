@@ -19,6 +19,7 @@ import {
   X,
   FileText,
   ChevronRight,
+  GraduationCap,
 } from "lucide-react";
 import { Logo } from "./Logo";
 import { cn } from "@/lib/utils";
@@ -91,6 +92,10 @@ interface SidebarProps {
 
 export function Sidebar({ dynamicNotes = [] }: SidebarProps) {
   const pathname = usePathname();
+
+  if (pathname === "/hub" || pathname === "/") {
+    return null;
+  }
   const [isCollapsed, setIsCollapsed] = React.useState(false);
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [searchOpen, setSearchOpen] = React.useState(false);
