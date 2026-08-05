@@ -1,6 +1,15 @@
-# Como a Web Funciona: O Caminho de uma Requisição
+---
+title: "Como a Web Funciona: O Caminho de uma Requisição"
+description: "Compreender o funcionamento da infraestrutura sob a qual a internet opera é vital para resolver problemas de performance, configurar servidores com segurança e criar aplicações robustas."
+category: "Desenvolvimento Web"
+categorySlug: "web"
+tags: ["#web", "#dns", "#http", "#tcp", "#redes"]
+readingTime: "9 min"
+date: "2026-08-05"
+badge: "Web"
+---
 
-Compreender o funcionamento da infraestrutura sob a qual a internet opera é vital para resolver problemas de performance, configurar servidores com segurança e criar aplicações robustas. Nesta nota de estudos, cobriremos detalhadamente:
+Nesta nota de estudos, cobriremos detalhadamente:
 1. **O Ciclo de Requisição e Resposta (Request/Response)**
 2. **O Processo de Resolução de DNS (Domain Name System)**
 3. **Endereçamento IP (IPv4 vs IPv6) e Sub-redes básicas**

@@ -130,6 +130,9 @@ export function getNoteBySlug(categorySlug: string, slug: string): NoteItem | nu
   const readingTime = data.readingTime || calculateReadingTime(content);
   const categoryName = data.category || CATEGORY_NAMES[categorySlug] || categorySlug;
 
+  // Remove o título H1 (# Título) inicial se presente no corpo para não duplicar com o cabeçalho da página
+  const cleanContent = content.replace(/^#\s+.+(\r?\n)?/, "").trim();
+
   return {
     title,
     description,
@@ -141,7 +144,7 @@ export function getNoteBySlug(categorySlug: string, slug: string): NoteItem | nu
     date: data.date || "Atualizado recentemente",
     badge: data.badge,
     featured: data.featured || false,
-    content,
+    content: cleanContent,
   };
 }
 
