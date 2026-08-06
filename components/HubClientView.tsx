@@ -90,21 +90,6 @@ export function HubClientView({ notes }: HubClientViewProps) {
     return Array.from(map.values());
   }, [notes]);
 
-  // Lista de tags únicas
-  const allTags = React.useMemo(() => {
-    const tagSet = new Set<string>();
-    notes.forEach((note) => note.tags.forEach((tag) => tagSet.add(tag)));
-    return Array.from(tagSet);
-  }, [notes]);
-
-  // Minutos totais de leitura estimados
-  const totalReadingMinutes = React.useMemo(() => {
-    return notes.reduce((acc, note) => {
-      const match = note.readingTime.match(/(\d+)/);
-      const mins = match ? parseInt(match[1], 10) : 5;
-      return acc + mins;
-    }, 0);
-  }, [notes]);
 
   // Filtragem dinâmica
   const filteredNotes = React.useMemo(() => {
@@ -152,65 +137,7 @@ export function HubClientView({ notes }: HubClientViewProps) {
         </Link>
       </header>
 
-      {/* Hero Banner */}
-      <section className="relative overflow-hidden rounded-3xl border border-zinc-800 bg-gradient-to-br from-zinc-900/90 via-zinc-950 to-zinc-900 p-6 sm:p-10 shadow-2xl">
-        <div className="absolute top-0 right-0 -mt-10 -mr-10 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/3 -mb-10 h-64 w-64 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
 
-        <div className="relative space-y-6">
-          <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3.5 py-1 text-xs font-mono text-cyan-400 backdrop-blur-sm">
-            <GraduationCap className="h-4 w-4" />
-            <span>Central & Agregador de Estudos</span>
-          </div>
-
-          <div className="space-y-3 max-w-3xl">
-            <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
-              Seu Hub de{" "}
-              <span className="bg-gradient-to-r from-blue-400 via-cyan-300 to-emerald-400 bg-clip-text text-transparent">
-                Conhecimento & Notas
-              </span>
-            </h1>
-            <p className="text-sm sm:text-base text-zinc-400 leading-relaxed">
-              Explore e gerencie todas as anotações, comandos, snippets e guias técnicos organizados por tópico, tags e nível de progresso.
-            </p>
-          </div>
-
-          {/* Quick Metrics Bar */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
-            <div className="rounded-2xl border border-zinc-800/80 bg-zinc-900/50 p-4 space-y-1 backdrop-blur-md">
-              <div className="text-xs font-mono text-zinc-400 flex items-center gap-1.5">
-                <FileText className="h-3.5 w-3.5 text-blue-400" />
-                <span>Total de Notas</span>
-              </div>
-              <div className="text-2xl font-extrabold text-white font-mono">{notes.length}</div>
-            </div>
-
-            <div className="rounded-2xl border border-zinc-800/80 bg-zinc-900/50 p-4 space-y-1 backdrop-blur-md">
-              <div className="text-xs font-mono text-zinc-400 flex items-center gap-1.5">
-                <FolderTree className="h-3.5 w-3.5 text-emerald-400" />
-                <span>Categorias</span>
-              </div>
-              <div className="text-2xl font-extrabold text-white font-mono">{categories.length}</div>
-            </div>
-
-            <div className="rounded-2xl border border-zinc-800/80 bg-zinc-900/50 p-4 space-y-1 backdrop-blur-md">
-              <div className="text-xs font-mono text-zinc-400 flex items-center gap-1.5">
-                <Clock className="h-3.5 w-3.5 text-amber-400" />
-                <span>Tempo de Estudo</span>
-              </div>
-              <div className="text-2xl font-extrabold text-white font-mono">~{totalReadingMinutes} min</div>
-            </div>
-
-            <div className="rounded-2xl border border-zinc-800/80 bg-zinc-900/50 p-4 space-y-1 backdrop-blur-md">
-              <div className="text-xs font-mono text-zinc-400 flex items-center gap-1.5">
-                <Tag className="h-3.5 w-3.5 text-purple-400" />
-                <span>Tags Cobertas</span>
-              </div>
-              <div className="text-2xl font-extrabold text-white font-mono">{allTags.length}</div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Control Panel: Search & Filters */}
       <section className="space-y-4 rounded-2xl border border-zinc-800 bg-zinc-900/40 p-4 sm:p-6 backdrop-blur-sm">
