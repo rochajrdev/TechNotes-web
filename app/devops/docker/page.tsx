@@ -2,8 +2,6 @@ import Link from "next/link";
 import {
   Container,
   ChevronRight,
-  Clock,
-  Calendar,
   Layers,
   HardDrive,
   Network,
@@ -49,18 +47,6 @@ export default function DockerPage() {
           Aprenda a construir imagens ultra-leves com Multi-stage builds, orquestrar múltiplos serviços
           com Docker Compose e gerenciar redes e volumes em ambientes de desenvolvimento e produção.
         </p>
-
-        <div className="flex items-center gap-4 text-xs font-mono text-zinc-500 pt-2">
-          <span className="flex items-center gap-1.5">
-            <Clock className="h-3.5 w-3.5 text-zinc-400" />
-            9 min de leitura
-          </span>
-          <span>•</span>
-          <span className="flex items-center gap-1.5">
-            <Calendar className="h-3.5 w-3.5 text-zinc-400" />
-            Guia de Produção
-          </span>
-        </div>
       </header>
 
       {/* Section 1: Multi-stage Dockerfile */}

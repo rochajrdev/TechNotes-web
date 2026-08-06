@@ -2,8 +2,6 @@ import Link from "next/link";
 import {
   FolderGit2,
   ChevronRight,
-  Clock,
-  Calendar,
   GitBranch,
   GitMerge,
   GitCommit,
@@ -51,18 +49,6 @@ export default function GitWorkflowPage() {
           Estratégias para manter um histórico de commits limpo, linear e sem ruídos em equipes.
           Domine o rebase interativo, squash, cherry-pick e a convenção de commits semânticos.
         </p>
-
-        <div className="flex items-center gap-4 text-xs font-mono text-zinc-500 pt-2">
-          <span className="flex items-center gap-1.5">
-            <Clock className="h-3.5 w-3.5 text-zinc-400" />
-            8 min de leitura
-          </span>
-          <span>•</span>
-          <span className="flex items-center gap-1.5">
-            <Calendar className="h-3.5 w-3.5 text-zinc-400" />
-            Guia Prático de Produção
-          </span>
-        </div>
       </header>
 
       {/* Section 1: Git Merge vs Rebase */}

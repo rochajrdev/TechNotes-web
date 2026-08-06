@@ -2,8 +2,6 @@ import Link from "next/link";
 import {
   Layers,
   ChevronRight,
-  Clock,
-  Calendar,
   Cpu,
   Zap,
   Server,
@@ -49,18 +47,6 @@ export default function NextjsGuidePage() {
           Entenda a fundo a divisão entre React Server Components (RSC) e Client Components,
           como buscar dados diretamente no servidor sem APIs intermediárias e como usar Server Actions de forma segura.
         </p>
-
-        <div className="flex items-center gap-4 text-xs font-mono text-zinc-500 pt-2">
-          <span className="flex items-center gap-1.5">
-            <Clock className="h-3.5 w-3.5 text-zinc-400" />
-            11 min de leitura
-          </span>
-          <span>•</span>
-          <span className="flex items-center gap-1.5">
-            <Calendar className="h-3.5 w-3.5 text-zinc-400" />
-            Next.js App Router
-          </span>
-        </div>
       </header>
 
       {/* Section 1: RSC vs Client Components */}

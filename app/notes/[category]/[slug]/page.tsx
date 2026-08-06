@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ChevronRight, Clock, Calendar, Bookmark, ArrowLeft } from "lucide-react";
+import { ChevronRight, Bookmark, ArrowLeft } from "lucide-react";
 import { getAllNoteParams, getNoteBySlug } from "@/lib/content";
 import { Badge } from "@/components/ui/badge";
 import { MarkdownRenderer } from "@/components/MarkdownRenderer";
@@ -76,18 +76,6 @@ export default async function DynamicNotePage({ params }: NotePageProps) {
             {note.description}
           </p>
         )}
-
-        <div className="flex items-center gap-4 text-xs font-mono text-zinc-500 pt-2">
-          <span className="flex items-center gap-1.5">
-            <Clock className="h-3.5 w-3.5 text-zinc-400" />
-            {note.readingTime}
-          </span>
-          <span>•</span>
-          <span className="flex items-center gap-1.5">
-            <Calendar className="h-3.5 w-3.5 text-zinc-400" />
-            {note.date}
-          </span>
-        </div>
       </header>
 
       {/* Markdown Content Body */}

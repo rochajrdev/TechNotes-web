@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Terminal, ChevronRight, Clock, Calendar, Zap, Search, HardDrive } from "lucide-react";
+import { Terminal, ChevronRight, Zap, Search, HardDrive } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { CodeBlock } from "@/components/ui/code-block";
 
@@ -36,18 +36,6 @@ export default function ShellComandosPage() {
           Referência rápida com os comandos mais utilizados no dia a dia para inspeção de arquivos,
           gerenciamento de processos, monitoramento de disco e rede.
         </p>
-
-        <div className="flex items-center gap-4 text-xs font-mono text-zinc-500 pt-2">
-          <span className="flex items-center gap-1.5">
-            <Clock className="h-3.5 w-3.5 text-zinc-400" />
-            6 min de leitura
-          </span>
-          <span>•</span>
-          <span className="flex items-center gap-1.5">
-            <Calendar className="h-3.5 w-3.5 text-zinc-400" />
-            Cheatsheet Rápido
-          </span>
-        </div>
       </header>
 
       <section className="space-y-4">

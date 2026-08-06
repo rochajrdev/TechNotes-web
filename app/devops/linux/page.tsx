@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Server, ChevronRight, Clock, Calendar, ShieldCheck, Activity } from "lucide-react";
+import { Server, ChevronRight, ShieldCheck, Activity } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { CodeBlock } from "@/components/ui/code-block";
 

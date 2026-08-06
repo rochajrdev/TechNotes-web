@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Zap, ChevronRight, Clock, Calendar, Palette } from "lucide-react";
+import { Zap, ChevronRight, Palette } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { CodeBlock } from "@/components/ui/code-block";
 

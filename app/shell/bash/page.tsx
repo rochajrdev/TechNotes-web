@@ -2,8 +2,6 @@ import Link from "next/link";
 import {
   Terminal,
   ChevronRight,
-  Clock,
-  Calendar,
   AlertTriangle,
   Info,
   CheckCircle,
@@ -52,18 +50,6 @@ export default function BashFundamentalsPage() {
           fluxos de entrada e saída (streams), encadeamento com pipes, permissões de arquivos e boas
           práticas na escrita de scripts.
         </p>
-
-        <div className="flex items-center gap-4 text-xs font-mono text-zinc-500 pt-2">
-          <span className="flex items-center gap-1.5">
-            <Clock className="h-3.5 w-3.5 text-zinc-400" />
-            10 min de leitura
-          </span>
-          <span>•</span>
-          <span className="flex items-center gap-1.5">
-            <Calendar className="h-3.5 w-3.5 text-zinc-400" />
-            Atualizado recentemente
-          </span>
-        </div>
       </header>
 
       {/* Section 1: Standard Streams */}

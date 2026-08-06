@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Terminal, ChevronRight, Clock, Calendar, Code2, Play } from "lucide-react";
+import { Terminal, ChevronRight, Code2, Play } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { CodeBlock } from "@/components/ui/code-block";
 
