@@ -33,7 +33,7 @@ export function CodeBlock({
   return (
     <div
       className={cn(
-        "group relative my-4 overflow-hidden rounded-xl border border-zinc-800/80 bg-zinc-950/90 shadow-2xl font-mono text-sm",
+        "group relative my-4 overflow-hidden rounded-xl border border-zinc-800/80 bg-zinc-950/90 shadow-2xl font-mono text-sm break-inside-avoid",
         className
       )}
     >
