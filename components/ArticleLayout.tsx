@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ChevronRight, Bookmark, ArrowLeft, Download } from "lucide-react";
+import { ChevronRight, Bookmark, ArrowLeft, Download, FileCode } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface BreadcrumbItem {
@@ -13,6 +13,8 @@ export interface BreadcrumbItem {
 interface ArticleLayoutProps {
   children: React.ReactNode;
   breadcrumbs?: BreadcrumbItem[];
+  markdownContent?: string;
+  exportFilename?: string;
   showFooter?: boolean;
   className?: string;
 }
@@ -20,6 +22,8 @@ interface ArticleLayoutProps {
 export function ArticleLayout({
   children,
   breadcrumbs,
+  markdownContent,
+  exportFilename,
   showFooter = true,
   className,
 }: ArticleLayoutProps) {
@@ -27,6 +31,26 @@ export function ArticleLayout({
     if (typeof window !== "undefined") {
       window.print();
     }
+  };
+
+  const handleDownloadMD = () => {
+    if (!markdownContent || typeof window === "undefined") return;
+
+    const blob = new Blob([markdownContent], { type: "text/markdown;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+
+    const safeFilename = (exportFilename || "nota")
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9_-]/g, "-");
+
+    link.setAttribute("download", `${safeFilename}.md`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -45,45 +69,57 @@ export function ArticleLayout({
       </div>
 
       {/* Top Action & Breadcrumbs Bar (Escondida no PDF/Impressão) */}
-      {((breadcrumbs && breadcrumbs.length > 0) || true) && (
-        <div className="flex items-center justify-between gap-4 border-b border-zinc-800/80 pb-4 print:hidden">
-          {breadcrumbs && breadcrumbs.length > 0 ? (
-            <nav className="flex items-center gap-2 text-xs font-mono text-zinc-500 overflow-x-auto custom-scrollbar py-1">
-              <Link href="/" className="hover:text-zinc-300 transition-colors shrink-0">
-                Início
-              </Link>
-              {breadcrumbs.map((item, index) => {
-                const isLast = index === breadcrumbs.length - 1;
-                return (
-                  <React.Fragment key={index}>
-                    <ChevronRight className="h-3 w-3 text-zinc-600 shrink-0" />
-                    {item.href && !isLast ? (
-                      <Link href={item.href} className="hover:text-zinc-300 transition-colors shrink-0">
-                        {item.label}
-                      </Link>
-                    ) : (
-                      <span
-                        className={cn(
-                          isLast
-                            ? "text-blue-400 font-medium truncate max-w-[200px] sm:max-w-none"
-                            : "text-zinc-400 shrink-0"
-                        )}
-                      >
-                        {item.label}
-                      </span>
-                    )}
-                  </React.Fragment>
-                );
-              })}
-            </nav>
-          ) : (
-            <div />
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-zinc-800/80 pb-4 print:hidden">
+        {breadcrumbs && breadcrumbs.length > 0 ? (
+          <nav className="flex items-center gap-2 text-xs font-mono text-zinc-500 overflow-x-auto custom-scrollbar py-1">
+            <Link href="/" className="hover:text-zinc-300 transition-colors shrink-0">
+              Início
+            </Link>
+            {breadcrumbs.map((item, index) => {
+              const isLast = index === breadcrumbs.length - 1;
+              return (
+                <React.Fragment key={index}>
+                  <ChevronRight className="h-3 w-3 text-zinc-600 shrink-0" />
+                  {item.href && !isLast ? (
+                    <Link href={item.href} className="hover:text-zinc-300 transition-colors shrink-0">
+                      {item.label}
+                    </Link>
+                  ) : (
+                    <span
+                      className={cn(
+                        isLast
+                          ? "text-blue-400 font-medium truncate max-w-[200px] sm:max-w-none"
+                          : "text-zinc-400 shrink-0"
+                      )}
+                    >
+                      {item.label}
+                    </span>
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </nav>
+        ) : (
+          <div />
+        )}
+
+        {/* Grupo de Ações de Download (Mobile: Grid de 2 Colunas de Largura Total | Desktop: Flex Inline) */}
+        <div className="grid grid-cols-2 md:flex items-center gap-2 w-full md:w-auto shrink-0">
+          {markdownContent && (
+            <button
+              onClick={handleDownloadMD}
+              className="inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-xs font-semibold text-zinc-200 hover:text-white transition-all shadow-md group active:scale-95 cursor-pointer w-full md:w-auto"
+              title="Exportar anotação em formato Markdown (.md)"
+              type="button"
+            >
+              <FileCode className="h-3.5 w-3.5 text-blue-400 group-hover:scale-110 transition-transform" />
+              <span>Exportar MD</span>
+            </button>
           )}
 
-          {/* Botão de Download PDF */}
           <button
             onClick={handleDownloadPDF}
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-xs font-semibold text-zinc-200 hover:text-white transition-all shadow-md group shrink-0 active:scale-95 cursor-pointer"
+            className="inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-xs font-semibold text-zinc-200 hover:text-white transition-all shadow-md group active:scale-95 cursor-pointer w-full md:w-auto"
             title="Baixar página em formato PDF"
             type="button"
           >
@@ -91,7 +127,7 @@ export function ArticleLayout({
             <span>Baixar PDF</span>
           </button>
         </div>
-      )}
+      </div>
 
       {/* Conteúdo Principal do Artigo */}
       {children}
