@@ -56,14 +56,20 @@ body {
 /* Estilos de Impressão e Geração de PDF de Alta Qualidade */
 @media print {
   @page {
-    margin: 1.5cm;
-    size: auto;
+    margin: 1.2cm 1.5cm;
+    size: A4 portrait;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
   body {
     background-color: #ffffff !important;
-    color: #18181b !important;
-    font-size: 11pt !important;
+    color: #09090b !important;
+    font-size: 10.5pt !important;
+    line-height: 1.6 !important;
   }
 
   .print\:hidden,
@@ -88,66 +94,146 @@ body {
     margin: 0 !important;
   }
 
-  h1, h2, h3, h4, h5, h6, p, li, span, code, td, th {
-    color: #18181b !important;
+  /* Impede que seções, cards, tabelas e blocos de código quebrem entre páginas */
+  section,
+  article > div,
+  .group,
+  pre,
+  code,
+  table,
+  blockquote,
+  figure,
+  img,
+  [class*="rounded-xl"],
+  [class*="rounded-2xl"] {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Evita títulos órfãos no final da página */
+  h1, h2, h3, h4, h5, h6 {
+    color: #09090b !important;
+    break-after: avoid !important;
+    page-break-after: avoid !important;
   }
 
   h1 {
-    font-size: 22pt !important;
+    font-size: 20pt !important;
     font-weight: 800 !important;
     margin-bottom: 12pt !important;
+    margin-top: 0 !important;
   }
 
   h2 {
-    font-size: 16pt !important;
+    font-size: 14pt !important;
     font-weight: 700 !important;
     margin-top: 14pt !important;
-    margin-bottom: 8pt !important;
-    break-after: avoid;
+    margin-bottom: 6pt !important;
+    border-bottom: 1px solid #e4e4e7 !important;
+    padding-bottom: 4pt !important;
   }
 
   h3 {
-    font-size: 13pt !important;
+    font-size: 12pt !important;
     font-weight: 600 !important;
     margin-top: 10pt !important;
-    margin-bottom: 6pt !important;
-    break-after: avoid;
+    margin-bottom: 4pt !important;
   }
 
-  pre, code, table, blockquote, figure, img {
-    break-inside: avoid;
-  }
-
-  pre {
-    background-color: #f4f4f5 !important;
-    border: 1px solid #e4e4e7 !important;
-    border-radius: 8px !important;
-    padding: 10px !important;
+  p, li, span, td, th {
     color: #18181b !important;
-    white-space: pre-wrap !important;
-    word-break: break-word !important;
   }
 
-  code {
-    background-color: #f4f4f5 !important;
-    color: #2563eb !important;
-    border: 1px solid #e4e4e7 !important;
-    padding: 2px 4px !important;
-    border-radius: 4px !important;
+  /* Estilização limpa dos Blocos de Código em PDF */
+  .group {
+    background-color: #f8fafc !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: none !important;
+    margin-top: 10pt !important;
+    margin-bottom: 10pt !important;
   }
 
+  /* Cabeçalho do Bloco de Código */
+  .group > div:first-child {
+    background-color: #f1f5f9 !important;
+    border-bottom: 1px solid #cbd5e1 !important;
+    color: #334155 !important;
+  }
+
+  .group > div:first-child span {
+    color: #334155 !important;
+  }
+
+  /* Corpo do Bloco de Código */
+  pre, code {
+    background-color: transparent !important;
+    color: #0f172a !important;
+  }
+
+  pre code span {
+    color: #0f172a !important;
+  }
+
+  /* Cores de destaque nos blocos de código */
+  .group .text-zinc-200,
+  .group .text-zinc-300,
+  .group .text-zinc-400 {
+    color: #1e293b !important;
+  }
+
+  .group .text-zinc-500,
+  .group .text-zinc-600 {
+    color: #64748b !important;
+  }
+
+  .group .text-cyan-400,
+  .group .text-cyan-300,
+  .group .text-blue-400,
+  .group .text-blue-300 {
+    color: #0284c7 !important;
+  }
+
+  .group .text-emerald-400,
+  .group .text-emerald-300 {
+    color: #166534 !important;
+  }
+
+  .group .text-purple-400,
+  .group .text-purple-300,
+  .group .text-violet-400 {
+    color: #7e22ce !important;
+  }
+
+  .group .text-amber-400,
+  .group .text-amber-300 {
+    color: #b45309 !important;
+  }
+
+  /* Imagens em PDF */
   img {
     max-width: 100% !important;
+    max-height: 450px !important;
     height: auto !important;
     border-radius: 8px !important;
-    border: 1px solid #e4e4e7 !important;
+    border: 1px solid #cbd5e1 !important;
+    object-fit: contain !important;
   }
 
-  blockquote {
-    background-color: #eff6ff !important;
-    border-left: 4px solid #3b82f6 !important;
-    color: #1e3a8a !important;
-    padding: 8px 12px !important;
-    border-radius: 6px !important;
+  /* Blockquotes / Callouts */
+  blockquote,
+  [class*="bg-blue-500/5"],
+  [class*="bg-red-500/5"] {
+    background-color: #f0f9ff !important;
+    border: 1px solid #bae6fd !important;
+    border-left: 4px solid #0284c7 !important;
+    color: #0c4a6e !important;
+    padding: 10px 14px !important;
+    border-radius: 8px !important;
+  }
+
+  blockquote *,
+  [class*="bg-blue-500/5"] *,
+  [class*="bg-red-500/5"] * {
+    color: #0c4a6e !important;
   }
 }
