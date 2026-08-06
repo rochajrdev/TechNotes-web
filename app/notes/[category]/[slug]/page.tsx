@@ -71,7 +71,7 @@ export default async function DynamicNotePage({ params }: NotePageProps) {
 
       {/* Markdown Content Body */}
       <section className="mt-6">
-        <MarkdownRenderer content={note.content} />
+        <MarkdownRenderer content={note.content} categorySlug={note.categorySlug} />
       </section>
     </ArticleLayout>
   );

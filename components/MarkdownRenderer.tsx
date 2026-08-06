@@ -4,16 +4,17 @@ import * as React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { CodeBlock } from "@/components/ui/code-block";
-import { Info, Sparkles, ExternalLink } from "lucide-react";
+import { Info, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 interface MarkdownRendererProps {
   content: string;
+  categorySlug?: string;
   className?: string;
 }
 
-export function MarkdownRenderer({ content, className }: MarkdownRendererProps) {
+export function MarkdownRenderer({ content, categorySlug, className }: MarkdownRendererProps) {
   return (
     <div className={cn("markdown-content space-y-6 text-sm leading-relaxed text-zinc-300", className)}>
       <ReactMarkdown
@@ -89,6 +90,42 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
               {children}
             </td>
           ),
+          img: ({ src, alt }) => {
+            if (!src || typeof src !== "string") return null;
+
+            let imageSrc: string = src;
+            const isExternal = src.startsWith("http://") || src.startsWith("https://");
+
+            if (!isExternal) {
+              const cleanSrc = src.replace(/^\.\//, "");
+              if (src.startsWith("/")) {
+                imageSrc = src.startsWith("/api/content-media")
+                  ? src
+                  : `/api/content-media${src}`;
+              } else if (categorySlug) {
+                imageSrc = `/api/content-media/${encodeURIComponent(categorySlug)}/${cleanSrc}`;
+              } else {
+                imageSrc = `/api/content-media/${cleanSrc}`;
+              }
+            }
+
+            return (
+              <span className="block my-6 overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/60 p-2 shadow-lg">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={imageSrc}
+                  alt={alt || "Imagem da nota"}
+                  className="w-full h-auto rounded-xl object-contain max-h-[600px] mx-auto bg-zinc-950/80"
+                  loading="lazy"
+                />
+                {alt && alt !== "alt text" && (
+                  <span className="block text-center text-xs text-zinc-400 mt-2 font-mono">
+                    {alt}
+                  </span>
+                )}
+              </span>
+            );
+          },
           a: ({ href, children }) => {
             const isExternal = href?.startsWith("http");
             if (isExternal) {
@@ -113,7 +150,7 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
               </Link>
             );
           },
-          code: ({ className, children, ...props }) => {
+          code: ({ className, children }) => {
             const match = /language-(\w+)/.exec(className || "");
             const isInline = !match && typeof children === "string" && !children.includes("\n");
 
