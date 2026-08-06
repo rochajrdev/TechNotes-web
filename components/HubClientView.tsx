@@ -276,21 +276,8 @@ export function HubClientView({ notes }: HubClientViewProps) {
         </div>
       </header>
 
-      {/* Seção Principal: Escolha sua Trilha de Estudos */}
+      {/* Grid de Categorias */}
       <section className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white flex items-center gap-2.5">
-              <span>Trilhas de Conhecimento</span>
-              <span className="text-xs font-mono font-medium px-2.5 py-0.5 rounded-full border border-zinc-800 bg-zinc-900 text-zinc-400">
-                {filteredCategories.length} disponíveis
-              </span>
-            </h1>
-            <p className="text-xs sm:text-sm text-zinc-400 mt-1">
-              Selecione uma categoria técnica para acessar seu plano de estudos e conteúdo exclusivo.
-            </p>
-          </div>
-        </div>
 
         {/* Grid de Cards de Categorias */}
         {filteredCategories.length === 0 ? (
@@ -351,30 +338,7 @@ export function HubClientView({ notes }: HubClientViewProps) {
                       </p>
                     </div>
 
-                    {/* Preview de Aulas/Tópicos */}
-                    {category.lessonTitles.length > 0 && (
-                      <div className="pt-2 border-t border-zinc-800/60 space-y-1">
-                        <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-500 block">
-                          Conteúdos em destaque:
-                        </span>
-                        <div className="space-y-1">
-                          {category.lessonTitles.slice(0, 3).map((title, i) => (
-                            <div
-                              key={i}
-                              className="text-xs text-zinc-400 truncate flex items-center gap-1.5"
-                            >
-                              <span className="h-1 w-1 rounded-full bg-zinc-600 group-hover:bg-cyan-400 transition-colors shrink-0" />
-                              <span className="truncate">{title}</span>
-                            </div>
-                          ))}
-                          {category.lessonTitles.length > 3 && (
-                            <span className="text-[10px] font-mono text-zinc-500 pl-2.5 block">
-                              +{category.lessonTitles.length - 3} outros conteúdos...
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    )}
+
                   </div>
 
                   {/* Rodapé do Card: Tags e Ação */}
