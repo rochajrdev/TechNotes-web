@@ -4,7 +4,6 @@ import * as React from "react";
 import Link from "next/link";
 import {
   Search,
-  Sparkles,
   BookOpen,
   Terminal,
   Layers,
@@ -14,11 +13,6 @@ import {
   Cpu,
   Server,
   ArrowRight,
-  FolderTree,
-  CheckCircle2,
-  Clock,
-  Play,
-  GraduationCap,
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { cn } from "@/lib/utils";
@@ -310,7 +304,7 @@ export function HubClientView({ notes }: HubClientViewProps) {
                   )}
                 >
                   <div className="space-y-4">
-                    {/* Topo do Card: Ícone e Badge de Aulas */}
+                    {/* Topo do Card: Ícone */}
                     <div className="flex items-start justify-between gap-3">
                       <div
                         className={cn(
@@ -321,11 +315,6 @@ export function HubClientView({ notes }: HubClientViewProps) {
                       >
                         <CategoryIcon className={cn("h-6 w-6", category.iconColor)} />
                       </div>
-
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono font-medium border border-zinc-800 bg-zinc-950/80 text-zinc-300">
-                        <Play className="h-3 w-3 text-cyan-400 fill-cyan-400/20" />
-                        <span>{category.lessonsCount} {category.lessonsCount === 1 ? "aula" : "aulas"}</span>
-                      </span>
                     </div>
 
                     {/* Título & Descrição */}
