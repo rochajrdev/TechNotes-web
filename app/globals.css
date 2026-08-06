@@ -53,4 +53,101 @@ body {
   animation: border-beam var(--duration, 15s) infinite linear;
 }
 
+/* Estilos de Impressão e Geração de PDF de Alta Qualidade */
+@media print {
+  @page {
+    margin: 1.5cm;
+    size: auto;
+  }
 
+  body {
+    background-color: #ffffff !important;
+    color: #18181b !important;
+    font-size: 11pt !important;
+  }
+
+  .print\:hidden,
+  aside,
+  button,
+  header button,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+
+  main {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  article {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  h1, h2, h3, h4, h5, h6, p, li, span, code, td, th {
+    color: #18181b !important;
+  }
+
+  h1 {
+    font-size: 22pt !important;
+    font-weight: 800 !important;
+    margin-bottom: 12pt !important;
+  }
+
+  h2 {
+    font-size: 16pt !important;
+    font-weight: 700 !important;
+    margin-top: 14pt !important;
+    margin-bottom: 8pt !important;
+    break-after: avoid;
+  }
+
+  h3 {
+    font-size: 13pt !important;
+    font-weight: 600 !important;
+    margin-top: 10pt !important;
+    margin-bottom: 6pt !important;
+    break-after: avoid;
+  }
+
+  pre, code, table, blockquote, figure, img {
+    break-inside: avoid;
+  }
+
+  pre {
+    background-color: #f4f4f5 !important;
+    border: 1px solid #e4e4e7 !important;
+    border-radius: 8px !important;
+    padding: 10px !important;
+    color: #18181b !important;
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+  }
+
+  code {
+    background-color: #f4f4f5 !important;
+    color: #2563eb !important;
+    border: 1px solid #e4e4e7 !important;
+    padding: 2px 4px !important;
+    border-radius: 4px !important;
+  }
+
+  img {
+    max-width: 100% !important;
+    height: auto !important;
+    border-radius: 8px !important;
+    border: 1px solid #e4e4e7 !important;
+  }
+
+  blockquote {
+    background-color: #eff6ff !important;
+    border-left: 4px solid #3b82f6 !important;
+    color: #1e3a8a !important;
+    padding: 8px 12px !important;
+    border-radius: 6px !important;
+  }
+}
