@@ -1,36 +1,116 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TechNotes Web
 
-## Getting Started
+**TechNotes** é uma plataforma moderna de gerenciamento de conhecimento técnico e visualizador de documentação em Markdown. Desenvolvida para organizar notas de estudo, cheatsheets, guias e referências técnicas de forma rápida, elegante e dinamicamente categorizada.
 
-First, run the development server:
+---
+
+## ⚡ Principais Recursos
+
+- **Leitor de Markdown Dinâmico**: Renderiza notas escritas em Markdown diretamente do sistema de arquivos local (`content/`).
+- **Navegação Inteligente**: Organização automática por categorias e tópicos com breadcrumbs e estatísticas de leitura.
+- **Menu de Comandos (`Ctrl + K`)**: Busca global rápida por notas e categorias em tempo real.
+- **Visual Moderno & Dark Mode**: Interface construída com Tailwind CSS v4, suporte a blocos de código formatados e realce visual por badges de tecnologia.
+- **Geração Estática (SSG/SSR)**: Desempenho otimizado usando Next.js App Router e pré-renderização estática de rotas (`generateStaticParams`).
+
+---
+
+## 🚀 Stack Tecnológica
+
+| Categoria | Tecnologias Utilizadas |
+| :--- | :--- |
+| **Framework Base** | Next.js 16 (App Router), React 19, TypeScript 5 |
+| **Estilização** | Tailwind CSS v4, PostCSS, Lucide React (Ícones) |
+| **Animações & UI** | Framer Motion, Radix UI (Accordion, Dialog, Tooltip), `cmdk` |
+| **Processamento Markdown** | `gray-matter`, `react-markdown`, `remark-gfm` |
+
+---
+
+## 📁 Estrutura de Arquivos
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+TechNotes-web/
+├── app/                        # Next.js App Router
+│   ├── layout.tsx              # Layout Raiz (Sidebar, Temas, Fontes Geist)
+│   ├── page.tsx                # Dashboard principal (Hub de Aprendizado)
+│   └── notes/[category]/[slug]/ # Rota dinâmica SSG para renderização individual de cada nota
+├── components/                 # Componentes React Reutilizáveis
+│   ├── Sidebar.tsx             # Menu de navegação lateral com busca e filtro por categoria
+│   ├── CommandMenu.tsx         # Modal de busca rápida (Ctrl+K)
+│   ├── MarkdownRenderer.tsx    # Componente de renderização customizado de Markdown
+│   └── ui/                     # Componentes primitivos (Badge, Button, CodeBlock)
+├── content/                    # Base de Notas em Markdown (.md)
+│   ├── algoritmos-estrutura-dados/ # Notas de Algoritmos
+│   ├── banco-de-dados-fundamentos/ # Notas de Banco de Dados
+│   ├── devops/                 # Conteúdo DevOps
+│   ├── shell/                  # Comandos e scripts Shell/Linux
+│   └── web/                    # Desenvolvimento Web (React, Next.js, etc.)
+├── lib/
+│   ├── content.ts              # Engine de leitura e extração de metadados dos arquivos Markdown
+│   └── utils.ts                # Utilitários Tailwind (clsx + tailwind-merge)
+└── README.md
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📝 Como Adicionar Novas Notas
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Para adicionar uma nova anotação ou tutorial à plataforma, basta criar um arquivo `.md` dentro da subpasta correspondente em `content/`.
 
-## Learn More
+### 1. Diretórios de Categoria em `content/`
+Sempre utilize **slugs em caixa baixa, sem acentos ou espaços** para os nomes das pastas e dos arquivos.
 
-To learn more about Next.js, take a look at the following resources:
+Exemplo:
+- `content/web/meu-novo-post.md`
+- `content/algoritmos-estrutura-dados/arvores-binarias.md`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 2. Formato e Frontmatter Recomendado
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Você pode incluir metadados no início do arquivo usando formato YAML Frontmatter (`---`):
 
-## Deploy on Vercel
+```markdown
+---
+title: "Introdução ao Docker"
+description: "Aprenda a criar contêineres e gerenciar aplicações isoladas."
+category: "DevOps & Ferramentas"
+tags: ["#docker", "#devops", "#containers"]
+date: "2026-08-06"
+badge: "Docker"
+status: "concluido"
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Introdução ao Docker
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Escreva seu conteúdo em Markdown aqui...
+```
+
+*Nota: Se o frontmatter `title` ou `description` não forem especificados, a plataforma extrairá automaticamente o primeiro título `#` e o primeiro parágrafo do texto.*
+
+---
+
+## ⚙️ Comandos de Desenvolvimento
+
+### Instalação de Dependências
+```bash
+npm install
+```
+
+### Executar Servidor de Desenvolvimento
+```bash
+npm run dev
+```
+Abra [http://localhost:3000](http://localhost:3000) no seu navegador.
+
+### Compilação de Produção
+```bash
+npm run build
+```
+
+### Iniciar Servidor de Produção
+```bash
+npm run start
+```
+
+### Linters e Checagens
+```bash
+npm run lint
+```

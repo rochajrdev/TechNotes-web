@@ -26,6 +26,8 @@ const CATEGORY_NAMES: Record<string, string> = {
   shell: "Shell & Linux",
   web: "Desenvolvimento Web",
   devops: "DevOps & Ferramentas",
+  "algoritmos-estrutura-dados": "Algoritmos & Estrutura de Dados",
+  "banco-de-dados-fundamentos": "Banco de Dados - Fundamentos",
 };
 
 /**

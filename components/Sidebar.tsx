@@ -71,6 +71,24 @@ const KNOWN_CATEGORIES: Record<string, CategoryMeta> = {
     borderColor: "border-cyan-500/40",
     glowColor: "shadow-cyan-500/10",
   },
+  "algoritmos-estrutura-dados": {
+    key: "algoritmos-estrutura-dados",
+    name: "Algoritmos & Estrutura de Dados",
+    icon: Cpu,
+    color: "text-purple-400",
+    badgeColor: "bg-purple-500/10 text-purple-300 border-purple-500/30",
+    borderColor: "border-purple-500/40",
+    glowColor: "shadow-purple-500/10",
+  },
+  "banco-de-dados-fundamentos": {
+    key: "banco-de-dados-fundamentos",
+    name: "Banco de Dados - Fundamentos",
+    icon: Database,
+    color: "text-amber-400",
+    badgeColor: "bg-amber-500/10 text-amber-300 border-amber-500/30",
+    borderColor: "border-amber-500/40",
+    glowColor: "shadow-amber-500/10",
+  },
 };
 
 const baseNavigationData: Record<

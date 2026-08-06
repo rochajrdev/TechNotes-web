@@ -14,7 +14,7 @@ O nível conceitual descreve a estrutura de todo o banco de dados para uma deter
 
 O nível interno descreve a estrutura de armazenamento físico dos dados do banco de dados. Ele inclui detalhes sobre os caminhos de acesso aos dados internamente, como índices, estruturas de armazenamento e métodos de acesso. Este nível é responsável por otimizar o desempenho do banco de dados, garantindo que as operações de leitura e escrita sejam realizadas de maneira eficiente.
 
-![Níveis de Abstração](4Níveisdeabstração.png)
+![Níveis de Abstração](4niveisdeabstracao.png)
 
 *Figura 1 - Níveis de Abstração*
 
