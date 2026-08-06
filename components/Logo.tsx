@@ -139,7 +139,7 @@ export function Logo({ collapsed = false, className, size = "md" }: LogoProps) {
             </span>
           </div>
           <p className="text-[11px] text-zinc-400 tracking-wide font-mono flex items-center gap-1">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500" />
             <span>developer dochub</span>
           </p>
         </div>
