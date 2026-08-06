@@ -164,16 +164,16 @@ export function Sidebar({ dynamicNotes = [] }: SidebarProps) {
     setOpenGroups((prev) => ({ ...prev, [title]: !prev[title] }));
   };
 
-  // Combina as rotas base com as notas Markdown dinâmicas da pasta content/
+  // Combina as rotas base com todas as notas Markdown dinâmicas da pasta content/
   const navigationGroups = React.useMemo(() => {
-    return baseNavigationData.map((group) => {
+    const baseGroups = baseNavigationData.map((group) => {
       const categoryNotes = dynamicNotes.filter(
         (note) => note.categorySlug.toLowerCase() === group.categoryKey.toLowerCase()
       );
 
       const dynamicItems = categoryNotes.map((note) => ({
         title: note.title,
-        href: `/notes/${note.categorySlug}/${note.slug}`,
+        href: `/notes/${encodeURIComponent(note.categorySlug)}/${encodeURIComponent(note.slug)}`,
         badge: note.badge || "MD",
       }));
 
@@ -185,6 +185,39 @@ export function Sidebar({ dynamicNotes = [] }: SidebarProps) {
         items: [...group.items, ...filteredDynamic],
       };
     });
+
+    // Identifica e adiciona quaisquer novas pastas/categorias criadas em content/
+    const baseCategoryKeys = new Set(baseNavigationData.map((g) => g.categoryKey.toLowerCase()));
+    const customCategoriesMap = new Map<string, { name: string; notes: NoteMetadata[] }>();
+
+    dynamicNotes.forEach((note) => {
+      const key = note.categorySlug.toLowerCase();
+      if (!baseCategoryKeys.has(key)) {
+        const existing = customCategoriesMap.get(key);
+        if (existing) {
+          existing.notes.push(note);
+        } else {
+          customCategoriesMap.set(key, {
+            name: note.category,
+            notes: [note],
+          });
+        }
+      }
+    });
+
+    const customGroups: NavGroup[] = Array.from(customCategoriesMap.entries()).map(([key, data]) => ({
+      title: data.name,
+      categoryKey: key,
+      icon: BookOpen,
+      color: "text-purple-400",
+      items: data.notes.map((note) => ({
+        title: note.title,
+        href: `/notes/${encodeURIComponent(note.categorySlug)}/${encodeURIComponent(note.slug)}`,
+        badge: note.badge || "MD",
+      })),
+    }));
+
+    return [...baseGroups, ...customGroups];
   }, [dynamicNotes]);
 
   // Abre o flyout menu na posição exata do botão clicado
