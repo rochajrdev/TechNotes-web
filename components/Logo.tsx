@@ -137,9 +137,6 @@ export function Logo({ collapsed = false, className, size = "md" }: LogoProps) {
             <span className="font-extrabold text-base sm:text-lg tracking-tight text-white group-hover:text-cyan-300 transition-colors">
               Tech<span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent">Notes</span>
             </span>
-            <span className="text-[10px] font-mono bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-1.5 py-0.2 rounded font-semibold tracking-wider">
-              PRO
-            </span>
           </div>
           <p className="text-[11px] text-zinc-400 tracking-wide font-mono flex items-center gap-1">
             <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
