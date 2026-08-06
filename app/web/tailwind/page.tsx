@@ -1,7 +1,7 @@
-import Link from "next/link";
-import { Zap, ChevronRight, Palette } from "lucide-react";
+import { Palette } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { CodeBlock } from "@/components/ui/code-block";
+import { ArticleLayout } from "@/components/ArticleLayout";
 
 export const metadata = {
   title: "Tailwind CSS v4 Engine - TechNotes",
@@ -10,17 +10,12 @@ export const metadata = {
 
 export default function TailwindV4Page() {
   return (
-    <article className="space-y-10 pb-20">
-      <nav className="flex items-center gap-2 text-xs font-mono text-zinc-500">
-        <Link href="/" className="hover:text-zinc-300 transition-colors">
-          Início
-        </Link>
-        <ChevronRight className="h-3 w-3 text-zinc-600" />
-        <span className="text-zinc-400">Desenvolvimento Web</span>
-        <ChevronRight className="h-3 w-3 text-zinc-600" />
-        <span className="text-purple-400 font-medium">Tailwind CSS v4</span>
-      </nav>
-
+    <ArticleLayout
+      breadcrumbs={[
+        { label: "Desenvolvimento Web" },
+        { label: "Tailwind CSS v4" },
+      ]}
+    >
       <header className="space-y-4 border-b border-zinc-800 pb-6">
         <div className="flex flex-wrap items-center gap-2">
           <Badge variant="purple">#tailwind4</Badge>
@@ -57,6 +52,6 @@ export default function TailwindV4Page() {
 }`}
         />
       </section>
-    </article>
+    </ArticleLayout>
   );
 }
