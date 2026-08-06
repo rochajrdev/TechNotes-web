@@ -14,6 +14,8 @@ import {
   Server,
   ArrowRight,
   Sparkles,
+  FileText,
+  Command,
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { cn } from "@/lib/utils";
@@ -409,31 +411,55 @@ export function HubClientView({ notes }: HubClientViewProps) {
   }, [categoriesList, searchQuery]);
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 pb-20 pt-2">
+    <div className="w-full space-y-8 pb-20 pt-2">
       {/* Header Superior Principal */}
-      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-800/80 pb-6">
-        <Link href="/" className="hover:opacity-90 transition-opacity">
-          <Logo size="md" />
-        </Link>
+      <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-zinc-800/80 pb-6">
+        <div className="space-y-2">
+          <Link href="/" className="hover:opacity-90 transition-opacity inline-block">
+            <Logo size="md" />
+          </Link>
+          <p className="text-xs text-zinc-400 max-w-xl leading-relaxed">
+            Hub agregador de anotações técnicas, cheatsheets e referências dinâmicas para desenvolvimento.
+          </p>
+        </div>
 
-        {/* Busca Rápida */}
-        <div className="relative w-full sm:w-80">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Buscar por categoria, tecnologia ou tag..."
-            className="w-full pl-10 pr-8 py-2 rounded-xl bg-zinc-900/80 border border-zinc-800 text-xs text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all font-sans"
-          />
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-zinc-500 hover:text-zinc-300"
-            >
-              ✕
-            </button>
-          )}
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Quick Stats Badges */}
+          <div className="hidden sm:flex items-center gap-3 px-3.5 py-2 rounded-xl bg-zinc-900/60 border border-zinc-800 text-xs font-mono text-zinc-300">
+            <div className="flex items-center gap-1.5">
+              <FileText className="h-3.5 w-3.5 text-blue-400" />
+              <span>{notes.length} Notas</span>
+            </div>
+            <span className="text-zinc-700">•</span>
+            <div className="flex items-center gap-1.5">
+              <BookOpen className="h-3.5 w-3.5 text-purple-400" />
+              <span>{categoriesList.length} Trilhas</span>
+            </div>
+          </div>
+
+          {/* Busca Rápida */}
+          <div className="relative w-full sm:w-80">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Buscar por categoria, tecnologia ou tag..."
+              className="w-full pl-10 pr-12 py-2 rounded-xl bg-zinc-900/80 border border-zinc-800 text-xs text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all font-sans"
+            />
+            {searchQuery ? (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-zinc-500 hover:text-zinc-300"
+              >
+                ✕
+              </button>
+            ) : (
+              <kbd className="absolute right-3 top-1/2 -translate-y-1/2 hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-zinc-800 border border-zinc-700/60 text-[10px] font-mono text-zinc-400 select-none">
+                <Command className="h-2.5 w-2.5" />K
+              </kbd>
+            )}
+          </div>
         </div>
       </header>
 

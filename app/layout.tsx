@@ -36,7 +36,7 @@ export default function RootLayout({
         <Sidebar dynamicNotes={dynamicNotes} />
 
         {/* Área de conteúdo principal */}
-        <main className="flex-1 min-w-0 p-6 md:p-10 max-w-5xl mx-auto overflow-y-auto">
+        <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 xl:p-10 w-full max-w-[1536px] mx-auto overflow-y-auto">
           {children}
         </main>
       </body>
