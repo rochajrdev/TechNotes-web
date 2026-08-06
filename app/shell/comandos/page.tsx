@@ -1,7 +1,7 @@
-import Link from "next/link";
-import { Terminal, ChevronRight, Zap, Search, HardDrive } from "lucide-react";
+import { Search, HardDrive } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { CodeBlock } from "@/components/ui/code-block";
+import { ArticleLayout } from "@/components/ArticleLayout";
 
 export const metadata = {
   title: "Comandos Essenciais Linux/Shell - TechNotes",
@@ -10,17 +10,12 @@ export const metadata = {
 
 export default function ShellComandosPage() {
   return (
-    <article className="space-y-10 pb-20">
-      <nav className="flex items-center gap-2 text-xs font-mono text-zinc-500">
-        <Link href="/" className="hover:text-zinc-300 transition-colors">
-          Início
-        </Link>
-        <ChevronRight className="h-3 w-3 text-zinc-600" />
-        <span className="text-zinc-400">Shell & Linux</span>
-        <ChevronRight className="h-3 w-3 text-zinc-600" />
-        <span className="text-emerald-400 font-medium">Comandos Essenciais</span>
-      </nav>
-
+    <ArticleLayout
+      breadcrumbs={[
+        { label: "Shell & Linux" },
+        { label: "Comandos Essenciais" },
+      ]}
+    >
       <header className="space-y-4 border-b border-zinc-800 pb-6">
         <div className="flex flex-wrap items-center gap-2">
           <Badge variant="success">#shell</Badge>
@@ -81,6 +76,6 @@ du -sh * | sort -hr | head -n 10
 free -m -h`}
         />
       </section>
-    </article>
+    </ArticleLayout>
   );
 }

@@ -1,7 +1,5 @@
-import Link from "next/link";
 import {
   Terminal,
-  ChevronRight,
   AlertTriangle,
   Info,
   CheckCircle,
@@ -12,6 +10,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { CodeBlock } from "@/components/ui/code-block";
+import { ArticleLayout } from "@/components/ArticleLayout";
 
 export const metadata = {
   title: "Fundamentos Shell & Bash - TechNotes",
@@ -20,17 +19,12 @@ export const metadata = {
 
 export default function BashFundamentalsPage() {
   return (
-    <article className="space-y-10 pb-20">
-      {/* Breadcrumbs */}
-      <nav className="flex items-center gap-2 text-xs font-mono text-zinc-500">
-        <Link href="/" className="hover:text-zinc-300 transition-colors">
-          Início
-        </Link>
-        <ChevronRight className="h-3 w-3 text-zinc-600" />
-        <span className="text-zinc-400">Shell & Linux</span>
-        <ChevronRight className="h-3 w-3 text-zinc-600" />
-        <span className="text-blue-400 font-medium">Fundamentos Bash</span>
-      </nav>
+    <ArticleLayout
+      breadcrumbs={[
+        { label: "Shell & Linux" },
+        { label: "Fundamentos Bash" },
+      ]}
+    >
 
       {/* Header Section */}
       <header className="space-y-4 border-b border-zinc-800 pb-6">
@@ -239,24 +233,6 @@ else
 fi`}
         />
       </section>
-
-      {/* Summary Footer */}
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-6 flex flex-col sm:flex-row items-center justify-between gap-4 mt-8">
-        <div className="space-y-1">
-          <div className="text-sm font-semibold text-white flex items-center gap-2">
-            <CheckCircle className="h-4 w-4 text-emerald-400" />
-            <span>Próximo Passo Recomendado</span>
-          </div>
-          <p className="text-xs text-zinc-400">
-            Pratique executando os pipelines no seu terminal local ou use a busca para explorar mais comandos.
-          </p>
-        </div>
-        <Link href="/">
-          <button className="px-4 py-2 rounded-lg bg-zinc-800 text-zinc-200 hover:bg-zinc-700 hover:text-white text-xs font-medium transition-colors whitespace-nowrap">
-            Voltar para o Dashboard
-          </button>
-        </Link>
-      </div>
-    </article>
+    </ArticleLayout>
   );
 }

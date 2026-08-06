@@ -1,7 +1,7 @@
-import Link from "next/link";
-import { Terminal, ChevronRight, Code2, Play } from "lucide-react";
+import { Code2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { CodeBlock } from "@/components/ui/code-block";
+import { ArticleLayout } from "@/components/ArticleLayout";
 
 export const metadata = {
   title: "Scripts & Automação Shell - TechNotes",
@@ -10,17 +10,12 @@ export const metadata = {
 
 export default function ShellScriptsPage() {
   return (
-    <article className="space-y-10 pb-20">
-      <nav className="flex items-center gap-2 text-xs font-mono text-zinc-500">
-        <Link href="/" className="hover:text-zinc-300 transition-colors">
-          Início
-        </Link>
-        <ChevronRight className="h-3 w-3 text-zinc-600" />
-        <span className="text-zinc-400">Shell & Linux</span>
-        <ChevronRight className="h-3 w-3 text-zinc-600" />
-        <span className="text-emerald-400 font-medium">Scripts & Automação</span>
-      </nav>
-
+    <ArticleLayout
+      breadcrumbs={[
+        { label: "Shell & Linux" },
+        { label: "Scripts & Automação" },
+      ]}
+    >
       <header className="space-y-4 border-b border-zinc-800 pb-6">
         <div className="flex flex-wrap items-center gap-2">
           <Badge variant="success">#bash</Badge>
@@ -70,6 +65,6 @@ done
 echo "✓ Todas as imagens foram processadas com sucesso!"`}
         />
       </section>
-    </article>
+    </ArticleLayout>
   );
 }
