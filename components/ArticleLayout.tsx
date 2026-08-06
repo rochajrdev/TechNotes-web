@@ -1,6 +1,8 @@
+"use client";
+
 import * as React from "react";
 import Link from "next/link";
-import { ChevronRight, Bookmark, ArrowLeft } from "lucide-react";
+import { ChevronRight, Bookmark, ArrowLeft, Download } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface BreadcrumbItem {
@@ -21,38 +23,74 @@ export function ArticleLayout({
   showFooter = true,
   className,
 }: ArticleLayoutProps) {
+  const handleDownloadPDF = () => {
+    if (typeof window !== "undefined") {
+      window.print();
+    }
+  };
+
   return (
     <article className={cn("max-w-4xl xl:max-w-5xl mx-auto space-y-10 pb-20", className)}>
-      {/* Navigation Breadcrumbs */}
-      {breadcrumbs && breadcrumbs.length > 0 && (
-        <nav className="flex items-center gap-2 text-xs font-mono text-zinc-500">
-          <Link href="/" className="hover:text-zinc-300 transition-colors">
-            Início
-          </Link>
-          {breadcrumbs.map((item, index) => {
-            const isLast = index === breadcrumbs.length - 1;
-            return (
-              <React.Fragment key={index}>
-                <ChevronRight className="h-3 w-3 text-zinc-600" />
-                {item.href && !isLast ? (
-                  <Link href={item.href} className="hover:text-zinc-300 transition-colors">
-                    {item.label}
-                  </Link>
-                ) : (
-                  <span
-                    className={cn(
-                      isLast
-                        ? "text-blue-400 font-medium truncate max-w-[200px] sm:max-w-none"
-                        : "text-zinc-400"
+      {/* Printable Document Header (Visível apenas ao gerar PDF / Imprimir) */}
+      <div className="hidden print:block mb-8 border-b border-zinc-300 pb-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-bold text-zinc-900">TechNotes - Documentação Técnica</h1>
+            <p className="text-xs text-zinc-600">Base de Conhecimento e Referências de Código</p>
+          </div>
+          <div className="text-right text-xs font-mono text-zinc-500">
+            {new Date().toLocaleDateString("pt-BR")}
+          </div>
+        </div>
+      </div>
+
+      {/* Top Action & Breadcrumbs Bar (Escondida no PDF/Impressão) */}
+      {((breadcrumbs && breadcrumbs.length > 0) || true) && (
+        <div className="flex items-center justify-between gap-4 border-b border-zinc-800/80 pb-4 print:hidden">
+          {breadcrumbs && breadcrumbs.length > 0 ? (
+            <nav className="flex items-center gap-2 text-xs font-mono text-zinc-500 overflow-x-auto custom-scrollbar py-1">
+              <Link href="/" className="hover:text-zinc-300 transition-colors shrink-0">
+                Início
+              </Link>
+              {breadcrumbs.map((item, index) => {
+                const isLast = index === breadcrumbs.length - 1;
+                return (
+                  <React.Fragment key={index}>
+                    <ChevronRight className="h-3 w-3 text-zinc-600 shrink-0" />
+                    {item.href && !isLast ? (
+                      <Link href={item.href} className="hover:text-zinc-300 transition-colors shrink-0">
+                        {item.label}
+                      </Link>
+                    ) : (
+                      <span
+                        className={cn(
+                          isLast
+                            ? "text-blue-400 font-medium truncate max-w-[200px] sm:max-w-none"
+                            : "text-zinc-400 shrink-0"
+                        )}
+                      >
+                        {item.label}
+                      </span>
                     )}
-                  >
-                    {item.label}
-                  </span>
-                )}
-              </React.Fragment>
-            );
-          })}
-        </nav>
+                  </React.Fragment>
+                );
+              })}
+            </nav>
+          ) : (
+            <div />
+          )}
+
+          {/* Botão de Download PDF */}
+          <button
+            onClick={handleDownloadPDF}
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-xs font-semibold text-zinc-200 hover:text-white transition-all shadow-md group shrink-0 active:scale-95 cursor-pointer"
+            title="Baixar página em formato PDF"
+            type="button"
+          >
+            <Download className="h-3.5 w-3.5 text-cyan-400 group-hover:scale-110 transition-transform" />
+            <span>Baixar PDF</span>
+          </button>
+        </div>
       )}
 
       {/* Conteúdo Principal do Artigo */}
@@ -60,7 +98,7 @@ export function ArticleLayout({
 
       {/* Navigation Footer */}
       {showFooter && (
-        <footer className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-6 flex flex-col sm:flex-row items-center justify-between gap-4 mt-12">
+        <footer className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-6 flex flex-col sm:flex-row items-center justify-between gap-4 mt-12 print:hidden">
           <div className="flex items-center gap-3">
             <div className="h-9 w-9 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
               <Bookmark className="h-4 w-4" />
