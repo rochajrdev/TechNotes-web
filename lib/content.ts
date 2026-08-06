@@ -29,16 +29,19 @@ const CATEGORY_NAMES: Record<string, string> = {
 };
 
 /**
- * Extrai o primeiro título # do markdown se o frontmatter não tiver title
+ * Extrai o primeiro título (# ou ## ou ###) do markdown se o frontmatter não tiver title
  */
 function extractTitleFromContent(content: string, fallback: string): string {
-  const match = content.match(/^#\s+(.+)$/m);
+  // Procura por # Título ou ## **Título**
+  const match = content.match(/^#{1,3}\s+\*?\*?([^*\r\n]+)\*?\*?/m);
   if (match && match[1]) {
     return match[1].trim();
   }
-  // Formata o slug: como-a-web-funciona -> Como a Web Funciona
+  // Formata o slug fallback: introducao-a-algoritmos -> Introducao A Algoritmos
   return fallback
-    .split("-")
+    .replace(/[_-]+/g, " ")
+    .split(" ")
+    .filter(Boolean)
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 }
@@ -53,8 +56,8 @@ function extractDescription(content: string): string {
     .replace(/<!--[\s\S]*?-->/g, "") // remove comentários
     .trim();
 
-  const firstParagraph = clean.split("\n\n")[0] || "";
-  return firstParagraph.slice(0, 160).trim();
+  const firstParagraph = clean.split(/\n\s*\n/)[0] || "";
+  return firstParagraph.replace(/\*\*/g, "").slice(0, 160).trim();
 }
 
 /**
@@ -93,7 +96,7 @@ export function getAllNotes(): NoteMetadata[] {
       const title = data.title || extractTitleFromContent(content, slug);
       const description = data.description || extractDescription(content);
       const readingTime = data.readingTime || calculateReadingTime(content);
-      const categoryName = data.category || CATEGORY_NAMES[category] || category;
+      const categoryName = data.category || CATEGORY_NAMES[category.toLowerCase()] || category;
 
       allNotes.push({
         title,
@@ -101,7 +104,7 @@ export function getAllNotes(): NoteMetadata[] {
         category: categoryName,
         categorySlug: category,
         slug,
-        tags: data.tags || [`#${category}`],
+        tags: data.tags || [`#${category.toLowerCase().replace(/\s+/g, "-")}`],
         readingTime,
         date: data.date || "Atualizado recentemente",
         badge: data.badge || "MD",
@@ -118,30 +121,64 @@ export function getAllNotes(): NoteMetadata[] {
  * Busca uma nota específica pelo categorySlug e slug do arquivo
  */
 export function getNoteBySlug(categorySlug: string, slug: string): NoteItem | null {
-  const fullPath = path.join(contentDirectory, categorySlug, `${slug}.md`);
-
-  if (!fs.existsSync(fullPath)) {
+  if (!fs.existsSync(contentDirectory)) {
     return null;
   }
 
+  const decodedCategory = decodeURIComponent(categorySlug).toLowerCase().trim();
+  const decodedSlug = decodeURIComponent(slug).toLowerCase().trim();
+
+  // Encontra a pasta correspondente (case-insensitive e decodificada)
+  const categories = fs.readdirSync(contentDirectory);
+  const matchedCategory = categories.find(
+    (cat) =>
+      cat.toLowerCase().trim() === decodedCategory ||
+      encodeURIComponent(cat).toLowerCase() === categorySlug.toLowerCase()
+  );
+
+  if (!matchedCategory) {
+    return null;
+  }
+
+  const categoryPath = path.join(contentDirectory, matchedCategory);
+  if (!fs.statSync(categoryPath).isDirectory()) {
+    return null;
+  }
+
+  const files = fs.readdirSync(categoryPath);
+  const matchedFile = files.find((file) => {
+    if (!file.endsWith(".md")) return false;
+    const fileSlug = file.replace(/\.md$/, "");
+    return (
+      fileSlug.toLowerCase().trim() === decodedSlug ||
+      encodeURIComponent(fileSlug).toLowerCase() === slug.toLowerCase()
+    );
+  });
+
+  if (!matchedFile) {
+    return null;
+  }
+
+  const fullPath = path.join(categoryPath, matchedFile);
   const fileContents = fs.readFileSync(fullPath, "utf8");
   const { data, content } = matter(fileContents);
 
-  const title = data.title || extractTitleFromContent(content, slug);
+  const fileSlug = matchedFile.replace(/\.md$/, "");
+  const title = data.title || extractTitleFromContent(content, fileSlug);
   const description = data.description || extractDescription(content);
   const readingTime = data.readingTime || calculateReadingTime(content);
-  const categoryName = data.category || CATEGORY_NAMES[categorySlug] || categorySlug;
+  const categoryName = data.category || CATEGORY_NAMES[matchedCategory.toLowerCase()] || matchedCategory;
 
-  // Remove o título H1 (# Título) inicial se presente no corpo para não duplicar com o cabeçalho da página
-  const cleanContent = content.replace(/^#\s+.+(\r?\n)?/, "").trim();
+  // Remove o título inicial (# ou ##) se presente no corpo para não duplicar com o cabeçalho
+  const cleanContent = content.replace(/^#{1,3}\s+.+(\r?\n)?/, "").trim();
 
   return {
     title,
     description,
     category: categoryName,
-    categorySlug,
-    slug,
-    tags: data.tags || [`#${categorySlug}`],
+    categorySlug: matchedCategory,
+    slug: fileSlug,
+    tags: data.tags || [`#${matchedCategory.toLowerCase().replace(/\s+/g, "-")}`],
     readingTime,
     date: data.date || "Atualizado recentemente",
     badge: data.badge,
