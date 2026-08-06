@@ -46,6 +46,8 @@ export default async function DynamicNotePage({ params }: NotePageProps) {
         { label: note.category },
         { label: note.title },
       ]}
+      markdownContent={note.content}
+      exportFilename={note.slug}
     >
       {/* Header */}
       <header className="space-y-4 border-b border-zinc-800 pb-6">
