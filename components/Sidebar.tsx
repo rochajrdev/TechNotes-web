@@ -277,12 +277,15 @@ export function Sidebar({ dynamicNotes = [] }: SidebarProps) {
     return item.title.toLowerCase().includes(filterQuery.toLowerCase().trim());
   });
 
+  // No drawer mobile (mobileOpen), a sidebar deve ser exibida sempre expandida com títulos
+  const showCollapsedUI = isCollapsed && !mobileOpen;
+
   return (
     <>
       {/* Botão Mobile Flutuante */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="md:hidden fixed top-4 left-4 z-40 p-2.5 rounded-xl bg-zinc-900/90 border border-zinc-800 text-zinc-300 shadow-xl backdrop-blur-md hover:text-white"
+        className="md:hidden fixed top-3.5 left-4 z-40 p-2.5 rounded-xl bg-zinc-900/90 border border-zinc-800 text-zinc-300 shadow-xl backdrop-blur-md hover:text-white"
         aria-label="Abrir menu do curso"
       >
         <Menu className="h-5 w-5" />
@@ -300,14 +303,14 @@ export function Sidebar({ dynamicNotes = [] }: SidebarProps) {
       <aside
         className={cn(
           "bg-zinc-950/95 backdrop-blur-md border-r border-zinc-800/80 flex flex-col h-screen sticky top-0 z-40 select-none transition-all duration-300 ease-in-out shrink-0",
-          isCollapsed ? "w-[72px]" : "w-80",
+          showCollapsedUI ? "w-[72px]" : "w-80",
           "max-md:fixed max-md:top-0 max-md:left-0 max-md:w-80 max-md:h-full max-md:z-50",
           mobileOpen ? "max-md:translate-x-0" : "max-md:-translate-x-full"
         )}
       >
         {/* Topo / Voltar ao Catálogo e Ações */}
         <div className="p-3.5 border-b border-zinc-800/70 flex items-center justify-between min-h-[64px]">
-          {isCollapsed ? (
+          {showCollapsedUI ? (
             <div className="w-full flex flex-col items-center gap-2">
               <Link
                 href="/"
@@ -355,7 +358,7 @@ export function Sidebar({ dynamicNotes = [] }: SidebarProps) {
         </div>
 
         {/* Cabeçalho do Tópico / Trilha Ativa */}
-        {!isCollapsed ? (
+        {!showCollapsedUI ? (
           <div className="p-4 border-b border-zinc-800/60 bg-zinc-900/20">
             <div className="flex items-center gap-3">
               <div
@@ -398,7 +401,7 @@ export function Sidebar({ dynamicNotes = [] }: SidebarProps) {
         )}
 
         {/* Campo de Filtro Rápido */}
-        {!isCollapsed && (
+        {!showCollapsedUI && (
           <div className="p-3 pb-1 border-b border-zinc-800/50">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-zinc-500" />
@@ -435,7 +438,7 @@ export function Sidebar({ dynamicNotes = [] }: SidebarProps) {
                 decodedCurrentPath === decodedItemHref ||
                 decodedCurrentPath.startsWith(`${decodedItemHref}/`);
 
-              if (isCollapsed) {
+              if (showCollapsedUI) {
                 return (
                   <div key={item.href} className="flex justify-center py-0.5">
                     <Link
@@ -502,7 +505,7 @@ export function Sidebar({ dynamicNotes = [] }: SidebarProps) {
 
         {/* Rodapé da Sidebar: Atalho Global Ctrl + K */}
         <div className="p-3 border-t border-zinc-800/70 bg-zinc-950/60">
-          {isCollapsed ? (
+          {showCollapsedUI ? (
             <button
               onClick={() => setSearchOpen(true)}
               className="w-full flex items-center justify-center p-2 rounded-xl text-zinc-500 hover:text-cyan-400 hover:bg-zinc-900 transition-colors"
