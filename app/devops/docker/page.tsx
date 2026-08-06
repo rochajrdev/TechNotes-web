@@ -1,7 +1,5 @@
-import Link from "next/link";
 import {
   Container,
-  ChevronRight,
   Layers,
   HardDrive,
   Network,
@@ -10,6 +8,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { CodeBlock } from "@/components/ui/code-block";
+import { ArticleLayout } from "@/components/ArticleLayout";
 
 export const metadata = {
   title: "Docker & Containerização - TechNotes",
@@ -18,17 +17,12 @@ export const metadata = {
 
 export default function DockerPage() {
   return (
-    <article className="space-y-10 pb-20">
-      {/* Breadcrumbs */}
-      <nav className="flex items-center gap-2 text-xs font-mono text-zinc-500">
-        <Link href="/" className="hover:text-zinc-300 transition-colors">
-          Início
-        </Link>
-        <ChevronRight className="h-3 w-3 text-zinc-600" />
-        <span className="text-zinc-400">DevOps & Ferramentas</span>
-        <ChevronRight className="h-3 w-3 text-zinc-600" />
-        <span className="text-cyan-400 font-medium">Docker & Compose</span>
-      </nav>
+    <ArticleLayout
+      breadcrumbs={[
+        { label: "DevOps & Ferramentas" },
+        { label: "Docker & Compose" },
+      ]}
+    >
 
       {/* Header Section */}
       <header className="space-y-4 border-b border-zinc-800 pb-6">
@@ -175,6 +169,6 @@ docker exec -it <container_id> sh
 docker system prune -a --volumes`}
         />
       </section>
-    </article>
+    </ArticleLayout>
   );
 }

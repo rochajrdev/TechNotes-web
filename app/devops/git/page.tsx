@@ -1,7 +1,5 @@
-import Link from "next/link";
 import {
   FolderGit2,
-  ChevronRight,
   GitBranch,
   GitMerge,
   GitCommit,
@@ -12,6 +10,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { CodeBlock } from "@/components/ui/code-block";
+import { ArticleLayout } from "@/components/ArticleLayout";
 
 export const metadata = {
   title: "Git Workflow & Boas Práticas - TechNotes",
@@ -20,17 +19,12 @@ export const metadata = {
 
 export default function GitWorkflowPage() {
   return (
-    <article className="space-y-10 pb-20">
-      {/* Breadcrumbs */}
-      <nav className="flex items-center gap-2 text-xs font-mono text-zinc-500">
-        <Link href="/" className="hover:text-zinc-300 transition-colors">
-          Início
-        </Link>
-        <ChevronRight className="h-3 w-3 text-zinc-600" />
-        <span className="text-zinc-400">DevOps & Ferramentas</span>
-        <ChevronRight className="h-3 w-3 text-zinc-600" />
-        <span className="text-amber-400 font-medium">Git Workflow</span>
-      </nav>
+    <ArticleLayout
+      breadcrumbs={[
+        { label: "DevOps & Ferramentas" },
+        { label: "Git Workflow" },
+      ]}
+    >
 
       {/* Header Section */}
       <header className="space-y-4 border-b border-zinc-800 pb-6">
@@ -189,6 +183,6 @@ git rebase -i HEAD~4
           <strong className="text-white">NUNCA</strong> faça rebase em branches públicas compartilhadas (como a <code className="text-zinc-200 font-mono">main</code> ou <code className="text-zinc-200 font-mono">develop</code>). Use o rebase apenas na sua própria branch de trabalho privada antes de mergear.
         </p>
       </div>
-    </article>
+    </ArticleLayout>
   );
 }
