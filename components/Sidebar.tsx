@@ -10,25 +10,16 @@ import {
   FolderGit2,
   Container,
   Layers,
-  Sparkles,
-  ChevronDown,
-  Bookmark,
   PanelLeftClose,
   PanelLeftOpen,
   Menu,
   X,
   FileText,
-  ChevronRight,
-  GraduationCap,
   ArrowLeft,
   Database,
   Code2,
   Cpu,
-  Server,
-  PlayCircle,
-  CheckCircle2,
 } from "lucide-react";
-import { Logo } from "./Logo";
 import { cn } from "@/lib/utils";
 import { CommandMenu } from "./CommandMenu";
 import type { NoteMetadata } from "@/lib/content";
@@ -160,6 +151,20 @@ interface SidebarProps {
   dynamicNotes?: NoteMetadata[];
 }
 
+interface NavigationItem {
+  title: string;
+  href: string;
+  badge?: string;
+  icon?: React.ElementType;
+}
+
+interface NavigationSection {
+  key: "pages" | "notes";
+  title: string;
+  description: string;
+  items: NavigationItem[];
+}
+
 export function Sidebar({ dynamicNotes = [] }: SidebarProps) {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = React.useState(false);
@@ -169,20 +174,25 @@ export function Sidebar({ dynamicNotes = [] }: SidebarProps) {
 
   // Carregar preferência salva de recolhimento no desktop
   React.useEffect(() => {
+    let saved: string | null = null;
     try {
-      const saved = localStorage.getItem("technotes_sidebar_collapsed");
-      if (saved !== null) {
-        setIsCollapsed(saved === "true");
-      }
+      saved = localStorage.getItem("technotes_sidebar_collapsed");
     } catch {
       // ignore
     }
+
+    if (saved === null) return;
+    const timer = window.setTimeout(() => setIsCollapsed(saved === "true"), 0);
+    return () => window.clearTimeout(timer);
   }, []);
 
   // Fechar menu mobile ao mudar de rota
   React.useEffect(() => {
-    setMobileOpen(false);
-    setFilterQuery("");
+    const timer = window.setTimeout(() => {
+      setMobileOpen(false);
+      setFilterQuery("");
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, [pathname]);
 
   const toggleCollapse = () => {
@@ -217,12 +227,10 @@ export function Sidebar({ dynamicNotes = [] }: SidebarProps) {
           badge: note.badge || "MD",
         }));
 
-      const existingHrefs = new Set(baseItems.map((i) => i.href));
-      const combinedItems = [...baseItems, ...dynamicItems.filter((i) => !existingHrefs.has(i.href))];
-
       return {
         meta,
-        items: combinedItems,
+        pages: baseItems,
+        notes: dynamicItems,
       };
     }
 
@@ -251,12 +259,10 @@ export function Sidebar({ dynamicNotes = [] }: SidebarProps) {
         badge: note.badge || "MD",
       }));
 
-      const existingHrefs = new Set(baseItems.map((i) => i.href));
-      const combinedItems = [...baseItems, ...dynamicItems.filter((i) => !existingHrefs.has(i.href))];
-
       return {
         meta,
-        items: combinedItems.length > 0 ? combinedItems : dynamicItems,
+        pages: baseItems,
+        notes: dynamicItems,
       };
     }
 
@@ -268,14 +274,33 @@ export function Sidebar({ dynamicNotes = [] }: SidebarProps) {
     return null;
   }
 
-  const { meta, items } = activeCategoryData;
+  const { meta, pages, notes } = activeCategoryData;
   const CategoryIcon = meta.icon;
 
-  // Filtragem interna de tópicos
-  const filteredItems = items.filter((item) => {
-    if (!filterQuery.trim()) return true;
-    return item.title.toLowerCase().includes(filterQuery.toLowerCase().trim());
-  });
+  const totalItems = pages.length + notes.length;
+  const normalizedFilter = filterQuery.toLowerCase().trim();
+  const navigationSections: NavigationSection[] = [
+    {
+      key: "pages",
+      title: "Páginas",
+      description: "Experiências e guias interativos",
+      items: pages,
+    },
+    {
+      key: "notes",
+      title: "Notas",
+      description: "Conteúdo em Markdown",
+      items: notes,
+    },
+  ];
+  const sections = navigationSections.map((section) => ({
+    ...section,
+    items: section.items.filter(
+      (item) => !normalizedFilter || item.title.toLowerCase().includes(normalizedFilter)
+    ),
+  }));
+
+  const filteredItemCount = sections.reduce((total, section) => total + section.items.length, 0);
 
   // No drawer mobile (mobileOpen), a sidebar deve ser exibida sempre expandida com títulos
   const showCollapsedUI = isCollapsed && !mobileOpen;
@@ -382,7 +407,7 @@ export function Sidebar({ dynamicNotes = [] }: SidebarProps) {
 
             <div className="mt-3 flex items-center justify-between text-[11px] font-mono text-zinc-400 bg-zinc-900/60 px-2.5 py-1 rounded-lg border border-zinc-800/80">
               <span>Conteúdos disponíveis</span>
-              <span className="font-bold text-zinc-200">{items.length} itens</span>
+              <span className="font-bold text-zinc-200">{totalItems} itens</span>
             </div>
           </div>
         ) : (
@@ -425,79 +450,120 @@ export function Sidebar({ dynamicNotes = [] }: SidebarProps) {
         )}
 
         {/* Lista Dinâmica de Conteúdos da Categoria Ativa */}
-        <div className="flex-1 overflow-y-auto p-3 space-y-1.5 custom-scrollbar">
-          {filteredItems.length === 0 ? (
+        <div className="flex-1 overflow-y-auto p-3 custom-scrollbar">
+          {filteredItemCount === 0 ? (
             <div className="p-4 text-center text-xs text-zinc-500">
               Nenhum conteúdo encontrado para &quot;{filterQuery}&quot;
             </div>
           ) : (
-            filteredItems.map((item, index) => {
-              const decodedItemHref = decodeURIComponent(item.href);
-              const decodedCurrentPath = decodeURIComponent(pathname);
-              const isActive =
-                decodedCurrentPath === decodedItemHref ||
-                decodedCurrentPath.startsWith(`${decodedItemHref}/`);
+            sections.map((section) => {
+              if (section.items.length === 0) return null;
 
-              if (showCollapsedUI) {
-                return (
-                  <div key={item.href} className="flex justify-center py-0.5">
-                    <Link
-                      href={item.href}
-                      className={cn(
-                        "h-10 w-10 rounded-xl flex items-center justify-center text-xs font-mono font-bold transition-all group relative border",
-                        isActive
-                          ? "bg-cyan-500/20 text-cyan-300 border-cyan-500/50 shadow-md shadow-cyan-500/10"
-                          : "text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900 border-transparent hover:border-zinc-800"
-                      )}
-                      title={item.title}
-                    >
-                      <span>{String(index + 1).padStart(2, "0")}</span>
-                      {isActive && (
-                        <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-cyan-400 ring-2 ring-zinc-950" />
-                      )}
-                    </Link>
-                  </div>
-                );
-              }
+              const SectionIcon = section.key === "pages" ? Layers : FileText;
 
               return (
-                <Link
-                  key={item.href}
-                  href={item.href}
+                <section
+                  key={section.key}
                   className={cn(
-                    "flex items-center justify-between gap-2.5 px-3 py-2 rounded-xl text-xs transition-all group border",
-                    isActive
-                      ? "bg-cyan-500/15 text-cyan-300 border-cyan-500/40 font-semibold shadow-sm shadow-cyan-500/5"
-                      : "text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900/70 border-transparent hover:border-zinc-800/80"
+                    "space-y-1.5",
+                    section.key === "notes" && "mt-5 border-t border-zinc-800/70 pt-4"
                   )}
                 >
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <span
-                      className={cn(
-                        "font-mono text-[10px] px-1.5 py-0.5 rounded border shrink-0",
-                        isActive
-                          ? "bg-cyan-500/20 text-cyan-300 border-cyan-500/40 font-bold"
-                          : "bg-zinc-900 text-zinc-500 border-zinc-800 group-hover:text-zinc-300"
-                      )}
+                  {showCollapsedUI ? (
+                    <div
+                      className="mb-1 flex justify-center text-zinc-600"
+                      title={`${section.title}: ${section.description}`}
                     >
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <span className="truncate">{item.title}</span>
-                  </div>
-
-                  {item.badge && (
-                    <span
-                      className={cn(
-                        "text-[9px] font-mono px-1.5 py-0.2 rounded border shrink-0 ml-1",
-                        isActive
-                          ? "bg-cyan-500/20 text-cyan-300 border-cyan-500/40"
-                          : "bg-zinc-900 text-zinc-500 border-zinc-800 group-hover:border-zinc-700"
-                      )}
-                    >
-                      {item.badge}
-                    </span>
+                      <SectionIcon className="h-3.5 w-3.5" />
+                    </div>
+                  ) : (
+                    <div className="mb-2 flex items-center justify-between px-2">
+                      <div className="flex min-w-0 items-center gap-2">
+                        <SectionIcon className={cn("h-3.5 w-3.5 shrink-0", meta.color)} />
+                        <div className="min-w-0">
+                          <h3 className="text-[10px] font-bold uppercase tracking-[0.16em] text-zinc-300">
+                            {section.title}
+                          </h3>
+                          <p className="truncate text-[9px] text-zinc-600">{section.description}</p>
+                        </div>
+                      </div>
+                      <span className="rounded-md border border-zinc-800 bg-zinc-900 px-1.5 py-0.5 text-[9px] font-mono text-zinc-500">
+                        {section.items.length}
+                      </span>
+                    </div>
                   )}
-                </Link>
+
+                  {section.items.map((item, index) => {
+                    const decodedItemHref = decodeURIComponent(item.href);
+                    const decodedCurrentPath = decodeURIComponent(pathname);
+                    const isActive =
+                      decodedCurrentPath === decodedItemHref ||
+                      decodedCurrentPath.startsWith(`${decodedItemHref}/`);
+                    const itemPrefix = section.key === "pages" ? "P" : "N";
+
+                    if (showCollapsedUI) {
+                      return (
+                        <div key={item.href} className="flex justify-center py-0.5">
+                          <Link
+                            href={item.href}
+                            className={cn(
+                              "h-10 w-10 rounded-xl flex items-center justify-center text-[10px] font-mono font-bold transition-all group relative border",
+                              isActive
+                                ? "bg-cyan-500/20 text-cyan-300 border-cyan-500/50 shadow-md shadow-cyan-500/10"
+                                : "text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900 border-transparent hover:border-zinc-800"
+                            )}
+                            title={`${section.title}: ${item.title}`}
+                          >
+                            <span>{itemPrefix}{String(index + 1).padStart(2, "0")}</span>
+                            {isActive && (
+                              <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-cyan-400 ring-2 ring-zinc-950" />
+                            )}
+                          </Link>
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className={cn(
+                          "flex items-center justify-between gap-2.5 px-3 py-2 rounded-xl text-xs transition-all group border",
+                          isActive
+                            ? "bg-cyan-500/15 text-cyan-300 border-cyan-500/40 font-semibold shadow-sm shadow-cyan-500/5"
+                            : "text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900/70 border-transparent hover:border-zinc-800/80"
+                        )}
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <span
+                            className={cn(
+                              "font-mono text-[10px] px-1.5 py-0.5 rounded border shrink-0",
+                              isActive
+                                ? "bg-cyan-500/20 text-cyan-300 border-cyan-500/40 font-bold"
+                                : "bg-zinc-900 text-zinc-500 border-zinc-800 group-hover:text-zinc-300"
+                            )}
+                          >
+                            {itemPrefix}{String(index + 1).padStart(2, "0")}
+                          </span>
+                          <span className="truncate">{item.title}</span>
+                        </div>
+
+                        {item.badge && (
+                          <span
+                            className={cn(
+                              "text-[9px] font-mono px-1.5 py-0.2 rounded border shrink-0 ml-1",
+                              isActive
+                                ? "bg-cyan-500/20 text-cyan-300 border-cyan-500/40"
+                                : "bg-zinc-900 text-zinc-500 border-zinc-800 group-hover:border-zinc-700"
+                            )}
+                          >
+                            {item.badge}
+                          </span>
+                        )}
+                      </Link>
+                    );
+                  })}
+                </section>
               );
             })
           )}
