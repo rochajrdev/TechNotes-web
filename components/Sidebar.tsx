@@ -450,7 +450,7 @@ export function Sidebar({ dynamicNotes = [] }: SidebarProps) {
         )}
 
         {/* Lista Dinâmica de Conteúdos da Categoria Ativa */}
-        <div className="flex-1 overflow-y-auto p-3 custom-scrollbar">
+        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto p-3 custom-scrollbar">
           {filteredItemCount === 0 ? (
             <div className="p-4 text-center text-xs text-zinc-500">
               Nenhum conteúdo encontrado para &quot;{filterQuery}&quot;
@@ -466,7 +466,7 @@ export function Sidebar({ dynamicNotes = [] }: SidebarProps) {
                   key={section.key}
                   className={cn(
                     "space-y-1.5",
-                    section.key === "notes" && "mt-5 border-t border-zinc-800/70 pt-4"
+                    section.key === "notes" && "mt-auto border-t border-zinc-800/70 pt-4"
                   )}
                 >
                   {showCollapsedUI ? (
