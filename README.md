@@ -117,6 +117,52 @@ redes: {
 
 No sidebar, as páginas TSX ficam na seção superior **Páginas**, enquanto as notas Markdown permanecem na seção inferior **Notas**.
 
+### Criando submódulos com dropdown
+
+Um módulo pode ter submódulos para assuntos mais específicos. As notas do submódulo ficam em uma pasta adicional:
+
+```text
+app/javascript/assincronismo/event-loop/page.tsx
+content/javascript/assincronismo/async-await.md
+content/javascript/assincronismo/tratamento-de-erros.md
+```
+
+Cadastre as páginas TSX do submódulo em `groups`. As notas são associadas ao dropdown automaticamente pelo nome da pasta:
+
+```ts
+javascript: {
+  key: "javascript",
+  name: "JavaScript",
+  icon: Braces,
+  color: "text-amber-400",
+  badgeColor: "bg-amber-500/10 text-amber-300 border-amber-500/30",
+  borderColor: "border-amber-500/40",
+  pages: [],
+  groups: [
+    {
+      key: "assincronismo",
+      name: "Assincronismo",
+      pages: [
+        {
+          title: "Event Loop",
+          href: "/javascript/assincronismo/event-loop",
+          badge: "JS",
+        },
+      ],
+    },
+  ],
+},
+```
+
+As URLs das notas continuam compatíveis com o conteúdo antigo:
+
+```text
+/notes/javascript/tipos-e-operadores
+/notes/javascript/assincronismo/async-await
+```
+
+O sistema suporta dois níveis de organização de conteúdo: módulo e submódulo.
+
 ---
 
 ## ⚙️ Comandos de Desenvolvimento
