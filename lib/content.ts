@@ -9,6 +9,8 @@ export interface NoteMetadata {
   description: string;
   category: string;
   categorySlug: string;
+  group?: string;
+  groupSlug?: string;
   slug: string;
   tags: string[];
   readingTime: string;
@@ -71,6 +73,41 @@ function calculateReadingTime(content: string): string {
   return `${minutes} min de leitura`;
 }
 
+function formatSlug(slug: string): string {
+  return slug
+    .replace(/[_-]+/g, " ")
+    .split(" ")
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+function readNoteMetadata(
+  fullPath: string,
+  categorySlug: string,
+  slug: string,
+  groupSlug?: string
+): NoteMetadata {
+  const fileContents = fs.readFileSync(fullPath, "utf8");
+  const { data, content } = matter(fileContents);
+
+  return {
+    title: data.title || extractTitleFromContent(content, slug),
+    description: data.description || extractDescription(content),
+    category: data.category || CATEGORY_NAMES[categorySlug.toLowerCase()] || categorySlug,
+    categorySlug,
+    group: groupSlug ? data.group || formatSlug(groupSlug) : undefined,
+    groupSlug,
+    slug,
+    tags: data.tags || [`#${categorySlug.toLowerCase().replace(/\s+/g, "-")}`],
+    readingTime: data.readingTime || calculateReadingTime(content),
+    date: data.date || "Atualizado recentemente",
+    badge: data.badge || "MD",
+    featured: data.featured || false,
+    status: data.status || "concluido",
+  };
+}
+
 /**
  * Lê todas as notas em Markdown da pasta content/ recursivamente
  */
@@ -86,33 +123,26 @@ export function getAllNotes(): NoteMetadata[] {
     const categoryPath = path.join(contentDirectory, category);
     if (!fs.statSync(categoryPath).isDirectory()) continue;
 
-    const files = fs.readdirSync(categoryPath);
-    for (const file of files) {
-      if (!file.endsWith(".md")) continue;
+    const entries = fs.readdirSync(categoryPath, { withFileTypes: true });
+    for (const entry of entries) {
+      if (entry.isFile() && entry.name.endsWith(".md")) {
+        const slug = entry.name.replace(/\.md$/, "");
+        allNotes.push(readNoteMetadata(path.join(categoryPath, entry.name), category, slug));
+        continue;
+      }
 
-      const slug = file.replace(/\.md$/, "");
-      const fullPath = path.join(categoryPath, file);
-      const fileContents = fs.readFileSync(fullPath, "utf8");
-      const { data, content } = matter(fileContents);
+      if (!entry.isDirectory()) continue;
+      const groupSlug = entry.name;
+      const groupPath = path.join(categoryPath, groupSlug);
+      const groupFiles = fs.readdirSync(groupPath, { withFileTypes: true });
 
-      const title = data.title || extractTitleFromContent(content, slug);
-      const description = data.description || extractDescription(content);
-      const readingTime = data.readingTime || calculateReadingTime(content);
-      const categoryName = data.category || CATEGORY_NAMES[category.toLowerCase()] || category;
-
-      allNotes.push({
-        title,
-        description,
-        category: categoryName,
-        categorySlug: category,
-        slug,
-        tags: data.tags || [`#${category.toLowerCase().replace(/\s+/g, "-")}`],
-        readingTime,
-        date: data.date || "Atualizado recentemente",
-        badge: data.badge || "MD",
-        featured: data.featured || false,
-        status: data.status || "concluido",
-      });
+      for (const groupFile of groupFiles) {
+        if (!groupFile.isFile() || !groupFile.name.endsWith(".md")) continue;
+        const slug = groupFile.name.replace(/\.md$/, "");
+        allNotes.push(
+          readNoteMetadata(path.join(groupPath, groupFile.name), category, slug, groupSlug)
+        );
+      }
     }
   }
 
@@ -122,13 +152,16 @@ export function getAllNotes(): NoteMetadata[] {
 /**
  * Busca uma nota específica pelo categorySlug e slug do arquivo
  */
-export function getNoteBySlug(categorySlug: string, slug: string): NoteItem | null {
+export function getNoteByPath(categorySlug: string, segments: string[]): NoteItem | null {
   if (!fs.existsSync(contentDirectory)) {
     return null;
   }
 
   const decodedCategory = decodeURIComponent(categorySlug).toLowerCase().trim();
-  const decodedSlug = decodeURIComponent(slug).toLowerCase().trim();
+  if (segments.length < 1 || segments.length > 2) return null;
+  const decodedSegments = segments.map((segment) => decodeURIComponent(segment).toLowerCase().trim());
+  const groupSlug = decodedSegments.length === 2 ? decodedSegments[0] : undefined;
+  const decodedSlug = decodedSegments.at(-1)!;
 
   // Encontra a pasta correspondente (case-insensitive e decodificada)
   const categories = fs.readdirSync(contentDirectory);
@@ -147,13 +180,24 @@ export function getNoteBySlug(categorySlug: string, slug: string): NoteItem | nu
     return null;
   }
 
-  const files = fs.readdirSync(categoryPath);
+  let notesPath = categoryPath;
+  let matchedGroup: string | undefined;
+  if (groupSlug) {
+    const groups = fs.readdirSync(categoryPath, { withFileTypes: true });
+    matchedGroup = groups.find(
+      (entry) => entry.isDirectory() && entry.name.toLowerCase().trim() === groupSlug
+    )?.name;
+    if (!matchedGroup) return null;
+    notesPath = path.join(categoryPath, matchedGroup);
+  }
+
+  const files = fs.readdirSync(notesPath);
   const matchedFile = files.find((file) => {
     if (!file.endsWith(".md")) return false;
     const fileSlug = file.replace(/\.md$/, "");
     return (
       fileSlug.toLowerCase().trim() === decodedSlug ||
-      encodeURIComponent(fileSlug).toLowerCase() === slug.toLowerCase()
+      encodeURIComponent(fileSlug).toLowerCase() === segments.at(-1)!.toLowerCase()
     );
   });
 
@@ -161,7 +205,7 @@ export function getNoteBySlug(categorySlug: string, slug: string): NoteItem | nu
     return null;
   }
 
-  const fullPath = path.join(categoryPath, matchedFile);
+  const fullPath = path.join(notesPath, matchedFile);
   const fileContents = fs.readFileSync(fullPath, "utf8");
   const { data, content } = matter(fileContents);
 
@@ -179,6 +223,8 @@ export function getNoteBySlug(categorySlug: string, slug: string): NoteItem | nu
     description,
     category: categoryName,
     categorySlug: matchedCategory,
+    group: matchedGroup ? data.group || formatSlug(matchedGroup) : undefined,
+    groupSlug: matchedGroup,
     slug: fileSlug,
     tags: data.tags || [`#${matchedCategory.toLowerCase().replace(/\s+/g, "-")}`],
     readingTime,
@@ -197,6 +243,6 @@ export function getAllNoteParams() {
   const notes = getAllNotes();
   return notes.map((note) => ({
     category: note.categorySlug,
-    slug: note.slug,
+    segments: note.groupSlug ? [note.groupSlug, note.slug] : [note.slug],
   }));
 }

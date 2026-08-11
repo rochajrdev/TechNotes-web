@@ -1,14 +1,14 @@
 import { notFound } from "next/navigation";
-import { getAllNoteParams, getNoteBySlug } from "@/lib/content";
+import type { Metadata } from "next";
+import { getAllNoteParams, getNoteByPath } from "@/lib/content";
 import { Badge } from "@/components/ui/badge";
 import { MarkdownRenderer } from "@/components/MarkdownRenderer";
 import { ArticleLayout } from "@/components/ArticleLayout";
-import type { Metadata } from "next";
 
 interface NotePageProps {
   params: Promise<{
     category: string;
-    slug: string;
+    segments: string[];
   }>;
 }
 
@@ -17,13 +17,11 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: NotePageProps): Promise<Metadata> {
-  const { category, slug } = await params;
-  const note = getNoteBySlug(category, slug);
+  const { category, segments } = await params;
+  const note = getNoteByPath(category, segments);
 
   if (!note) {
-    return {
-      title: "Nota não encontrada - TechNotes",
-    };
+    return { title: "Nota não encontrada - TechNotes" };
   }
 
   return {
@@ -33,23 +31,23 @@ export async function generateMetadata({ params }: NotePageProps): Promise<Metad
 }
 
 export default async function DynamicNotePage({ params }: NotePageProps) {
-  const { category, slug } = await params;
-  const note = getNoteBySlug(category, slug);
+  const { category, segments } = await params;
+  const note = getNoteByPath(category, segments);
 
-  if (!note) {
-    notFound();
-  }
+  if (!note) notFound();
+
+  const mediaBasePath = [note.categorySlug, note.groupSlug].filter(Boolean).join("/");
 
   return (
     <ArticleLayout
       breadcrumbs={[
         { label: note.category },
+        ...(note.group ? [{ label: note.group }] : []),
         { label: note.title },
       ]}
       markdownContent={note.content}
       exportFilename={note.slug}
     >
-      {/* Header */}
       <header className="space-y-4 border-b border-zinc-800 pb-6">
         <div className="flex flex-wrap items-center gap-2">
           {note.tags.map((tag) => (
@@ -71,9 +69,8 @@ export default async function DynamicNotePage({ params }: NotePageProps) {
         )}
       </header>
 
-      {/* Markdown Content Body */}
       <section className="mt-6">
-        <MarkdownRenderer content={note.content} categorySlug={note.categorySlug} />
+        <MarkdownRenderer content={note.content} mediaBasePath={mediaBasePath} />
       </section>
     </ArticleLayout>
   );
