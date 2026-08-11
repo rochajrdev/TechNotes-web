@@ -14,7 +14,13 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { cn } from "@/lib/utils";
-import { ROADMAP, type LevelId, type TopicEntry, type TopicNode } from "./roadmap-view";
+import {
+  ROADMAP,
+  type LevelId,
+  type TopicEntry,
+  type TopicGroup,
+  type TopicNode,
+} from "./roadmap-view";
 
 interface RoadmapNodeData extends Record<string, unknown> {
   label: string;
@@ -237,6 +243,87 @@ function RoadmapNode({ data }: NodeProps<RoadmapNode>) {
 
 const nodeTypes = { roadmap: RoadmapNode };
 
+function MobileTopicTree({ topic, level }: { topic: TopicEntry; level: LevelId }) {
+  const node = normalizeTopic(topic);
+  const hasChildren = Boolean(node.children?.length);
+
+  return (
+    <div className="relative pl-5">
+      <span className="absolute left-0 top-0 h-5 w-5 rounded-bl-xl border-b border-l border-zinc-700" />
+      <div
+        className={cn(
+          "relative rounded-xl border px-3 py-2.5 text-xs leading-snug",
+          hasChildren
+            ? "border-blue-500/35 bg-blue-500/10 font-semibold text-blue-100"
+            : "border-zinc-800 bg-zinc-900/90 text-zinc-300"
+        )}
+      >
+        {node.title}
+      </div>
+
+      {hasChildren && (
+        <div className="ml-3 space-y-2 border-l border-zinc-700 pt-2">
+          {node.children!.map((child) => (
+            <MobileTopicTree
+              key={normalizeTopic(child).title}
+              topic={child}
+              level={level}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MobileGroup({ group, level }: { group: TopicGroup; level: LevelId }) {
+  return (
+    <section className="relative pl-8">
+      <span className="absolute left-[7px] top-0 h-6 w-6 rounded-bl-xl border-b-2 border-l-2 border-cyan-500/45" />
+      <div className={cn("rounded-2xl border px-4 py-3 text-sm font-bold", LEVEL_CLASSES[level])}>
+        {group.title}
+      </div>
+      <div className="ml-4 mt-2 space-y-2 border-l border-dashed border-cyan-500/35 pt-1">
+        {group.topics.map((topic) => (
+          <MobileTopicTree
+            key={normalizeTopic(topic).title}
+            topic={topic}
+            level={level}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function MobileRoadmap() {
+  return (
+    <div className="relative overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-950 px-3 py-6 shadow-2xl">
+      <BackgroundPattern />
+      <div className="relative">
+        <div className="ml-8 inline-flex rounded-xl border border-yellow-400/50 bg-yellow-400 px-5 py-3 text-base font-black text-zinc-950 shadow-[0_0_24px_rgba(250,204,21,0.15)]">
+          JavaScript
+        </div>
+        <div className="ml-[39px] h-8 border-l-2 border-cyan-500/50" />
+
+        <div className="relative space-y-6 border-l-2 border-cyan-500/40 pb-3 pl-0 ml-[39px]">
+          {ROADMAP.flatMap((level) =>
+            level.groups.map((group) => (
+              <MobileGroup key={`${level.id}-${group.title}`} group={group} level={level.id} />
+            ))
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BackgroundPattern() {
+  return (
+    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(113,113,122,0.18)_1px,transparent_1px)] bg-[size:20px_20px]" />
+  );
+}
+
 export function JavaScriptRoadmap() {
   const [graph, setGraph] = React.useState<{ nodes: RoadmapNode[]; edges: Edge[]; height: number } | null>(null);
 
@@ -260,7 +347,11 @@ export function JavaScriptRoadmap() {
         </p>
       </header>
 
-      <div className="overflow-x-auto rounded-3xl">
+      <div className="md:hidden">
+        <MobileRoadmap />
+      </div>
+
+      <div className="hidden overflow-x-auto rounded-3xl md:block">
       <div
         className="min-h-[720px] min-w-[1040px] overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-950 shadow-2xl"
         style={{ height: graph?.height ?? 720 }}
