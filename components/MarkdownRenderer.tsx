@@ -18,11 +18,11 @@ import { cn } from "@/lib/utils";
 
 interface MarkdownRendererProps {
   content: string;
-  categorySlug?: string;
+  mediaBasePath?: string;
   className?: string;
 }
 
-export function MarkdownRenderer({ content, categorySlug, className }: MarkdownRendererProps) {
+export function MarkdownRenderer({ content, mediaBasePath, className }: MarkdownRendererProps) {
   return (
     <div className={cn("markdown-content space-y-6 text-sm leading-relaxed text-zinc-300", className)}>
       <ReactMarkdown
@@ -199,8 +199,12 @@ export function MarkdownRenderer({ content, categorySlug, className }: MarkdownR
                 imageSrc = src.startsWith("/api/content-media")
                   ? src
                   : `/api/content-media${src}`;
-              } else if (categorySlug) {
-                imageSrc = `/api/content-media/${encodeURIComponent(categorySlug)}/${cleanSrc}`;
+              } else if (mediaBasePath) {
+                const encodedBasePath = mediaBasePath
+                  .split("/")
+                  .map(encodeURIComponent)
+                  .join("/");
+                imageSrc = `/api/content-media/${encodedBasePath}/${cleanSrc}`;
               } else {
                 imageSrc = `/api/content-media/${cleanSrc}`;
               }

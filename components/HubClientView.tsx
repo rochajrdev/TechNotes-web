@@ -20,6 +20,7 @@ import {
 import { Logo } from "@/components/Logo";
 import { cn } from "@/lib/utils";
 import type { NoteMetadata } from "@/lib/content";
+import { getNoteHref } from "@/lib/note-path";
 
 interface HubClientViewProps {
   notes: NoteMetadata[];
@@ -314,14 +315,14 @@ export function HubClientView({ notes }: HubClientViewProps) {
 
       const dynamicLessons = matchingNotes.map((n) => ({
         title: n.title,
-        href: `/notes/${encodeURIComponent(n.categorySlug)}/${encodeURIComponent(n.slug)}`,
+        href: getNoteHref(n),
       }));
 
       const allLessons = [...config.baseLessons, ...dynamicLessons];
       const firstHref =
         allLessons[0]?.href ||
         (matchingNotes[0]
-          ? `/notes/${encodeURIComponent(matchingNotes[0].categorySlug)}/${encodeURIComponent(matchingNotes[0].slug)}`
+          ? getNoteHref(matchingNotes[0])
           : "/");
 
       const tags = Array.from(
@@ -369,7 +370,7 @@ export function HubClientView({ notes }: HubClientViewProps) {
 
       const firstNote = sortedNotes[0];
       const firstHref = firstNote
-        ? `/notes/${encodeURIComponent(firstNote.categorySlug)}/${encodeURIComponent(firstNote.slug)}`
+        ? getNoteHref(firstNote)
         : "/";
 
       const allTags = Array.from(

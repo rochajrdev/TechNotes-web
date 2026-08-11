@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { NoteMetadata } from "@/lib/content";
+import { getNoteHref } from "@/lib/note-path";
 
 export interface CatalogTopic {
   id: string;
@@ -229,7 +230,7 @@ export function TopicCatalog({ dynamicNotes = [], onSelectCategory }: TopicCatal
           iconComponent: BookOpen,
           iconColor: "text-purple-400 border-purple-500/30 bg-purple-500/10",
           href: firstNote
-            ? `/notes/${encodeURIComponent(catData.slug)}/${encodeURIComponent(firstNote.slug)}`
+            ? getNoteHref(firstNote)
             : "/",
           categoryKey: catData.slug,
           tags: Array.from(new Set(catData.notes.flatMap((n) => n.tags))),
