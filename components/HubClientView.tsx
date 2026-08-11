@@ -16,6 +16,7 @@ import {
   Sparkles,
   FileText,
   Command,
+  Braces,
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { cn } from "@/lib/utils";
@@ -58,6 +59,20 @@ const STATIC_TRACKS_CONFIG: Record<
     previewType: "docker" | "react" | "bash" | "database" | "algorithm" | "generic";
   }
 > = {
+  javascript: {
+    name: "JavaScript",
+    description:
+      "Uma trilha progressiva da base da linguagem ao assincronismo, módulos, memória, DOM e performance.",
+    icon: Braces,
+    iconColor: "text-yellow-300",
+    badgeColor: "bg-yellow-500/10 text-yellow-200 border-yellow-500/30",
+    borderColor: "border-yellow-500/30",
+    glowHover: "hover:border-yellow-500/50 hover:shadow-[0_0_30px_rgba(250,204,21,0.12)]",
+    baseLessons: [{ title: "Roadmap JavaScript", href: "/javascript/roadmap" }],
+    defaultTags: ["javascript", "ecmascript", "frontend", "async", "roadmap"],
+    gridSpan: "md:col-span-12 lg:col-span-5",
+    previewType: "generic",
+  },
   devops: {
     name: "DevOps & Ferramentas",
     description:
@@ -284,7 +299,7 @@ export function HubClientView({ notes }: HubClientViewProps) {
       let matchingNotes: NoteMetadata[] = [];
       let rawCategorySlug = key;
 
-      if (key === "devops" || key === "web" || key === "shell") {
+      if (key !== "banco" && key !== "algoritmos") {
         processedSlugs.add(key.toLowerCase());
         matchingNotes = notes.filter(
           (n) => n.categorySlug.toLowerCase().trim() === key.toLowerCase()

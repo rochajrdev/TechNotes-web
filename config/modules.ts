@@ -1,5 +1,5 @@
 import type { ElementType } from "react";
-import { Container, Cpu, Database, Layers, Terminal } from "lucide-react";
+import { Braces, Container, Cpu, Database, Layers, Terminal } from "lucide-react";
 
 export interface ModulePage {
   title: string;
@@ -31,6 +31,18 @@ export interface ModuleDefinition {
  * automaticamente em content/<chave-do-modulo>/*.md.
  */
 export const MODULES: Record<string, ModuleDefinition> = {
+  javascript: {
+    key: "javascript",
+    name: "JavaScript",
+    icon: Braces,
+    color: "text-yellow-300",
+    badgeColor: "bg-yellow-500/10 text-yellow-200 border-yellow-500/30",
+    borderColor: "border-yellow-500/40",
+    pages: [
+      { title: "Roadmap JavaScript", href: "/javascript/roadmap", badge: "Roadmap" },
+    ],
+    groups: [],
+  },
   shell: {
     key: "shell",
     name: "Shell & Linux",
