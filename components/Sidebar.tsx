@@ -4,11 +4,8 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Terminal,
   Search,
   BookOpen,
-  FolderGit2,
-  Container,
   Layers,
   PanelLeftClose,
   PanelLeftOpen,
@@ -18,95 +15,16 @@ import {
   ArrowLeft,
   Database,
   Code2,
-  Cpu,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CommandMenu } from "./CommandMenu";
 import type { NoteMetadata } from "@/lib/content";
+import { MODULES, type ModuleDefinition, type ModulePage } from "@/config/modules";
 
-interface CategoryMeta {
-  key: string;
-  name: string;
-  icon: React.ElementType;
-  color: string;
-  badgeColor: string;
-  borderColor: string;
-  glowColor: string;
-}
-
-const KNOWN_CATEGORIES: Record<string, CategoryMeta> = {
-  shell: {
-    key: "shell",
-    name: "Shell & Linux",
-    icon: Terminal,
-    color: "text-emerald-400",
-    badgeColor: "bg-emerald-500/10 text-emerald-300 border-emerald-500/30",
-    borderColor: "border-emerald-500/40",
-    glowColor: "shadow-emerald-500/10",
-  },
-  web: {
-    key: "web",
-    name: "Desenvolvimento Web",
-    icon: Layers,
-    color: "text-blue-400",
-    badgeColor: "bg-blue-500/10 text-blue-300 border-blue-500/30",
-    borderColor: "border-blue-500/40",
-    glowColor: "shadow-blue-500/10",
-  },
-  devops: {
-    key: "devops",
-    name: "DevOps & Ferramentas",
-    icon: Container,
-    color: "text-cyan-400",
-    badgeColor: "bg-cyan-500/10 text-cyan-300 border-cyan-500/30",
-    borderColor: "border-cyan-500/40",
-    glowColor: "shadow-cyan-500/10",
-  },
-  "algoritmos-estrutura-dados": {
-    key: "algoritmos-estrutura-dados",
-    name: "Algoritmos & Estrutura de Dados",
-    icon: Cpu,
-    color: "text-purple-400",
-    badgeColor: "bg-purple-500/10 text-purple-300 border-purple-500/30",
-    borderColor: "border-purple-500/40",
-    glowColor: "shadow-purple-500/10",
-  },
-  "banco-de-dados-fundamentos": {
-    key: "banco-de-dados-fundamentos",
-    name: "Banco de Dados - Fundamentos",
-    icon: Database,
-    color: "text-amber-400",
-    badgeColor: "bg-amber-500/10 text-amber-300 border-amber-500/30",
-    borderColor: "border-amber-500/40",
-    glowColor: "shadow-amber-500/10",
-  },
-};
-
-const baseNavigationData: Record<
-  string,
-  { title: string; href: string; badge?: string; icon?: React.ElementType }[]
-> = {
-  shell: [
-    { title: "Fundamentos Bash", href: "/shell/bash", badge: "Bash" },
-    { title: "Comandos Essenciais", href: "/shell/comandos", badge: "CLI" },
-    { title: "Scripts & Automação", href: "/shell/scripts", badge: "Scripts" },
-  ],
-  web: [
-    { title: "Next.js App Router", href: "/web/nextjs", badge: "Next.js" },
-    { title: "React 19 Hooks & Server", href: "/web/react", badge: "React" },
-    { title: "Tailwind CSS v4", href: "/web/tailwind", badge: "Tailwind" },
-  ],
-  devops: [
-    { title: "Docker & Compose", href: "/devops/docker", badge: "Docker", icon: Container },
-    { title: "Git Workflow", href: "/devops/git", badge: "Git", icon: FolderGit2 },
-    { title: "Linux Servers", href: "/devops/linux", badge: "Linux", icon: Terminal },
-  ],
-};
-
-function resolveCategoryMeta(key: string, nameFallback?: string): CategoryMeta {
+function resolveCategoryMeta(key: string, nameFallback?: string): ModuleDefinition {
   const normalized = key.toLowerCase().trim();
-  if (KNOWN_CATEGORIES[normalized]) {
-    return KNOWN_CATEGORIES[normalized];
+  if (MODULES[normalized]) {
+    return MODULES[normalized];
   }
 
   // Detecta ícones por termos comuns
@@ -114,26 +32,22 @@ function resolveCategoryMeta(key: string, nameFallback?: string): CategoryMeta {
   let color = "text-purple-400";
   let badgeColor = "bg-purple-500/10 text-purple-300 border-purple-500/30";
   let borderColor = "border-purple-500/40";
-  let glowColor = "shadow-purple-500/10";
 
   if (normalized.includes("banco") || normalized.includes("sql") || normalized.includes("dados")) {
     Icon = Database;
     color = "text-amber-400";
     badgeColor = "bg-amber-500/10 text-amber-300 border-amber-500/30";
     borderColor = "border-amber-500/40";
-    glowColor = "shadow-amber-500/10";
   } else if (normalized.includes("algorit") || normalized.includes("estrutura") || normalized.includes("code")) {
     Icon = Code2;
     color = "text-violet-400";
     badgeColor = "bg-violet-500/10 text-violet-300 border-violet-500/30";
     borderColor = "border-violet-500/40";
-    glowColor = "shadow-violet-500/10";
   } else if (normalized.includes("python") || normalized.includes("py")) {
     Icon = Code2;
     color = "text-sky-400";
     badgeColor = "bg-sky-500/10 text-sky-300 border-sky-500/30";
     borderColor = "border-sky-500/40";
-    glowColor = "shadow-sky-500/10";
   }
 
   return {
@@ -143,7 +57,7 @@ function resolveCategoryMeta(key: string, nameFallback?: string): CategoryMeta {
     color,
     badgeColor,
     borderColor,
-    glowColor,
+    pages: [],
   };
 }
 
@@ -151,12 +65,7 @@ interface SidebarProps {
   dynamicNotes?: NoteMetadata[];
 }
 
-interface NavigationItem {
-  title: string;
-  href: string;
-  badge?: string;
-  icon?: React.ElementType;
-}
+type NavigationItem = ModulePage;
 
 interface NavigationSection {
   key: "pages" | "notes";
@@ -209,14 +118,14 @@ export function Sidebar({ dynamicNotes = [] }: SidebarProps) {
 
   // 1. Detecta a categoria / tópico ativo com base na URL
   const activeCategoryData = React.useMemo(() => {
-    // Caso 1: Rota direta tipo /devops, /web, /shell
-    const baseMatch = pathname.match(/^\/(devops|web|shell)(?:\/.*)?$/);
+    // Caso 1: qualquer rota de módulo cadastrada em app/<modulo>/...
+    const baseMatch = pathname.match(/^\/(?!notes(?:\/|$))([^/]+)(?:\/.*)?$/);
     if (baseMatch) {
       const catKey = baseMatch[1].toLowerCase();
       const meta = resolveCategoryMeta(catKey);
 
       // Itens base estáticos
-      const baseItems = baseNavigationData[catKey] || [];
+      const baseItems = MODULES[catKey]?.pages || [];
 
       // Notas dinâmicas em Markdown dessa categoria
       const dynamicItems = dynamicNotes
@@ -250,8 +159,8 @@ export function Sidebar({ dynamicNotes = [] }: SidebarProps) {
       const categoryName = matchingNotes[0]?.category || rawCategorySlug;
       const meta = resolveCategoryMeta(rawCategorySlug, categoryName);
 
-      // Base items se for shell, web ou devops
-      const baseItems = baseNavigationData[catKey] || [];
+      // Páginas TSX registradas para este módulo
+      const baseItems = MODULES[catKey]?.pages || [];
 
       const dynamicItems = matchingNotes.map((note) => ({
         title: note.title,
