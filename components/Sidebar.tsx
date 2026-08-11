@@ -12,6 +12,7 @@ import {
   Menu,
   X,
   FileText,
+  ChevronDown,
   ArrowLeft,
   Database,
   Code2,
@@ -19,7 +20,13 @@ import {
 import { cn } from "@/lib/utils";
 import { CommandMenu } from "./CommandMenu";
 import type { NoteMetadata } from "@/lib/content";
-import { MODULES, type ModuleDefinition, type ModulePage } from "@/config/modules";
+import {
+  MODULES,
+  type ModuleDefinition,
+  type ModuleGroup,
+  type ModulePage,
+} from "@/config/modules";
+import { getNoteHref } from "@/lib/note-path";
 
 function resolveCategoryMeta(key: string, nameFallback?: string): ModuleDefinition {
   const normalized = key.toLowerCase().trim();
@@ -74,12 +81,41 @@ interface NavigationSection {
   items: NavigationItem[];
 }
 
+interface NavigationGroup extends ModuleGroup {
+  notes: NavigationItem[];
+}
+
+function buildGroups(moduleKey: string, notes: NoteMetadata[]): NavigationGroup[] {
+  const configuredGroups = MODULES[moduleKey]?.groups || [];
+  const groups = new Map<string, NavigationGroup>();
+
+  for (const group of configuredGroups) {
+    groups.set(group.key.toLowerCase(), { ...group, notes: [] });
+  }
+
+  for (const note of notes) {
+    if (!note.groupSlug) continue;
+    const key = note.groupSlug.toLowerCase();
+    const group = groups.get(key) || {
+      key: note.groupSlug,
+      name: note.group || note.groupSlug,
+      pages: [],
+      notes: [],
+    };
+    group.notes.push({ title: note.title, href: getNoteHref(note), badge: note.badge || "MD" });
+    groups.set(key, group);
+  }
+
+  return Array.from(groups.values());
+}
+
 export function Sidebar({ dynamicNotes = [] }: SidebarProps) {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = React.useState(false);
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [searchOpen, setSearchOpen] = React.useState(false);
   const [filterQuery, setFilterQuery] = React.useState("");
+  const [openGroups, setOpenGroups] = React.useState<Set<string>>(() => new Set());
 
   // Carregar preferência salva de recolhimento no desktop
   React.useEffect(() => {
@@ -128,11 +164,14 @@ export function Sidebar({ dynamicNotes = [] }: SidebarProps) {
       const baseItems = MODULES[catKey]?.pages || [];
 
       // Notas dinâmicas em Markdown dessa categoria
-      const dynamicItems = dynamicNotes
-        .filter((n) => n.categorySlug.toLowerCase().trim() === catKey)
+      const matchingNotes = dynamicNotes.filter(
+        (n) => n.categorySlug.toLowerCase().trim() === catKey
+      );
+      const dynamicItems = matchingNotes
+        .filter((note) => !note.groupSlug)
         .map((note) => ({
           title: note.title,
-          href: `/notes/${encodeURIComponent(note.categorySlug)}/${encodeURIComponent(note.slug)}`,
+          href: getNoteHref(note),
           badge: note.badge || "MD",
         }));
 
@@ -140,6 +179,7 @@ export function Sidebar({ dynamicNotes = [] }: SidebarProps) {
         meta,
         pages: baseItems,
         notes: dynamicItems,
+        groups: buildGroups(catKey, matchingNotes),
       };
     }
 
@@ -162,9 +202,9 @@ export function Sidebar({ dynamicNotes = [] }: SidebarProps) {
       // Páginas TSX registradas para este módulo
       const baseItems = MODULES[catKey]?.pages || [];
 
-      const dynamicItems = matchingNotes.map((note) => ({
+      const dynamicItems = matchingNotes.filter((note) => !note.groupSlug).map((note) => ({
         title: note.title,
-        href: `/notes/${encodeURIComponent(note.categorySlug)}/${encodeURIComponent(note.slug)}`,
+        href: getNoteHref(note),
         badge: note.badge || "MD",
       }));
 
@@ -172,6 +212,7 @@ export function Sidebar({ dynamicNotes = [] }: SidebarProps) {
         meta,
         pages: baseItems,
         notes: dynamicItems,
+        groups: buildGroups(catKey, matchingNotes),
       };
     }
 
@@ -183,10 +224,13 @@ export function Sidebar({ dynamicNotes = [] }: SidebarProps) {
     return null;
   }
 
-  const { meta, pages, notes } = activeCategoryData;
+  const { meta, pages, notes, groups } = activeCategoryData;
   const CategoryIcon = meta.icon;
 
-  const totalItems = pages.length + notes.length;
+  const totalItems =
+    pages.length +
+    notes.length +
+    groups.reduce((total, group) => total + group.pages.length + group.notes.length, 0);
   const normalizedFilter = filterQuery.toLowerCase().trim();
   const navigationSections: NavigationSection[] = [
     {
@@ -209,7 +253,35 @@ export function Sidebar({ dynamicNotes = [] }: SidebarProps) {
     ),
   }));
 
-  const filteredItemCount = sections.reduce((total, section) => total + section.items.length, 0);
+  const filteredGroups = groups
+    .map((group) => ({
+      ...group,
+      pages: group.pages.filter(
+        (item) => !normalizedFilter || item.title.toLowerCase().includes(normalizedFilter)
+      ),
+      notes: group.notes.filter(
+        (item) => !normalizedFilter || item.title.toLowerCase().includes(normalizedFilter)
+      ),
+    }))
+    .filter(
+      (group) =>
+        group.pages.length > 0 ||
+        group.notes.length > 0 ||
+        (!normalizedFilter && groups.some((candidate) => candidate.key === group.key))
+    );
+
+  const filteredItemCount =
+    sections.reduce((total, section) => total + section.items.length, 0) +
+    filteredGroups.reduce((total, group) => total + group.pages.length + group.notes.length, 0);
+
+  const toggleGroup = (key: string) => {
+    setOpenGroups((current) => {
+      const next = new Set(current);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  };
 
   // No drawer mobile (mobileOpen), a sidebar deve ser exibida sempre expandida com títulos
   const showCollapsedUI = isCollapsed && !mobileOpen;
@@ -366,13 +438,98 @@ export function Sidebar({ dynamicNotes = [] }: SidebarProps) {
             </div>
           ) : (
             sections.map((section) => {
-              if (section.items.length === 0) return null;
+              if (section.items.length === 0 && section.key !== "notes") return null;
+              if (section.items.length === 0 && filteredGroups.length === 0) return null;
 
               const SectionIcon = section.key === "pages" ? Layers : FileText;
 
               return (
-                <section
-                  key={section.key}
+                <React.Fragment key={section.key}>
+                  {section.key === "notes" && filteredGroups.length > 0 && (
+                    <div className="mt-4 space-y-2 border-t border-zinc-800/70 pt-4">
+                      {!showCollapsedUI && (
+                        <div className="mb-2 flex items-center justify-between px-2">
+                          <div className="flex items-center gap-2">
+                            <ChevronDown className={cn("h-3.5 w-3.5", meta.color)} />
+                            <div>
+                              <h3 className="text-[10px] font-bold uppercase tracking-[0.16em] text-zinc-300">
+                                Submódulos
+                              </h3>
+                              <p className="text-[9px] text-zinc-600">Nichos específicos</p>
+                            </div>
+                          </div>
+                          <span className="rounded-md border border-zinc-800 bg-zinc-900 px-1.5 py-0.5 text-[9px] font-mono text-zinc-500">
+                            {filteredGroups.length}
+                          </span>
+                        </div>
+                      )}
+
+                      {filteredGroups.map((group) => {
+                        const groupItems = [...group.pages, ...group.notes];
+                        const hasActiveItem = groupItems.some((item) => {
+                          const current = decodeURIComponent(pathname);
+                          const href = decodeURIComponent(item.href);
+                          return current === href || current.startsWith(`${href}/`);
+                        });
+                        const isOpen = normalizedFilter.length > 0 || openGroups.has(group.key) || hasActiveItem;
+
+                        return (
+                          <div key={group.key} className="overflow-hidden rounded-xl border border-zinc-800/80 bg-zinc-900/30">
+                            <button
+                              type="button"
+                              onClick={() => toggleGroup(group.key)}
+                              className={cn(
+                                "flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-xs transition-colors hover:bg-zinc-900",
+                                hasActiveItem ? "text-cyan-300" : "text-zinc-300",
+                                showCollapsedUI && "justify-center px-1"
+                              )}
+                              aria-expanded={isOpen}
+                            >
+                              {showCollapsedUI ? (
+                                <span className="font-mono text-[10px] font-bold">G</span>
+                              ) : (
+                                <>
+                                  <span className="truncate font-semibold">{group.name}</span>
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-[9px] font-mono text-zinc-600">{groupItems.length}</span>
+                                    <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", isOpen && "rotate-180")} />
+                                  </div>
+                                </>
+                              )}
+                            </button>
+
+                            {isOpen && (
+                              <div className="space-y-1 border-t border-zinc-800/70 p-1.5">
+                                {groupItems.map((item, index) => {
+                                  const isPage = index < group.pages.length;
+                                  const isActive = decodeURIComponent(pathname) === decodeURIComponent(item.href);
+                                  return (
+                                    <Link
+                                      key={item.href}
+                                      href={item.href}
+                                      title={item.title}
+                                      className={cn(
+                                        "flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-[11px] transition-colors",
+                                        isActive
+                                          ? "bg-cyan-500/15 text-cyan-300"
+                                          : "text-zinc-500 hover:bg-zinc-800/70 hover:text-zinc-200",
+                                        !isPage && index === group.pages.length && "border-t border-zinc-800/70 pt-2"
+                                      )}
+                                    >
+                                      <span className="shrink-0 font-mono text-[9px]">{isPage ? "P" : "N"}</span>
+                                      {!showCollapsedUI && <span className="truncate">{item.title}</span>}
+                                    </Link>
+                                  );
+                                })}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {section.items.length > 0 && <section
                   className={cn(
                     "space-y-1.5",
                     section.key === "notes" && "mt-auto border-t border-zinc-800/70 pt-4"
@@ -472,7 +629,8 @@ export function Sidebar({ dynamicNotes = [] }: SidebarProps) {
                       </Link>
                     );
                   })}
-                </section>
+                  </section>}
+                </React.Fragment>
               );
             })
           )}

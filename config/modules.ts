@@ -7,6 +7,12 @@ export interface ModulePage {
   badge?: string;
 }
 
+export interface ModuleGroup {
+  key: string;
+  name: string;
+  pages: ModulePage[];
+}
+
 export interface ModuleDefinition {
   key: string;
   name: string;
@@ -15,6 +21,7 @@ export interface ModuleDefinition {
   badgeColor: string;
   borderColor: string;
   pages: ModulePage[];
+  groups?: ModuleGroup[];
 }
 
 /**
@@ -36,6 +43,7 @@ export const MODULES: Record<string, ModuleDefinition> = {
       { title: "Comandos Essenciais", href: "/shell/comandos", badge: "CLI" },
       { title: "Scripts & Automação", href: "/shell/scripts", badge: "Scripts" },
     ],
+    groups: [],
   },
   web: {
     key: "web",
@@ -49,6 +57,7 @@ export const MODULES: Record<string, ModuleDefinition> = {
       { title: "React 19 Hooks & Server", href: "/web/react", badge: "React" },
       { title: "Tailwind CSS v4", href: "/web/tailwind", badge: "Tailwind" },
     ],
+    groups: [],
   },
   devops: {
     key: "devops",
@@ -62,6 +71,7 @@ export const MODULES: Record<string, ModuleDefinition> = {
       { title: "Git Workflow", href: "/devops/git", badge: "Git" },
       { title: "Linux Servers", href: "/devops/linux", badge: "Linux" },
     ],
+    groups: [],
   },
   "algoritmos-estrutura-dados": {
     key: "algoritmos-estrutura-dados",
@@ -71,6 +81,7 @@ export const MODULES: Record<string, ModuleDefinition> = {
     badgeColor: "bg-purple-500/10 text-purple-300 border-purple-500/30",
     borderColor: "border-purple-500/40",
     pages: [],
+    groups: [],
   },
   "banco-de-dados-fundamentos": {
     key: "banco-de-dados-fundamentos",
@@ -80,5 +91,6 @@ export const MODULES: Record<string, ModuleDefinition> = {
     badgeColor: "bg-amber-500/10 text-amber-300 border-amber-500/30",
     borderColor: "border-amber-500/40",
     pages: [],
+    groups: [],
   },
 };
