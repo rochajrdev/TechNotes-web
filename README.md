@@ -85,6 +85,38 @@ Escreva seu conteúdo em Markdown aqui...
 
 *Nota: Se o frontmatter `title` ou `description` não forem especificados, a plataforma extrairá automaticamente o primeiro título `#` e o primeiro parágrafo do texto.*
 
+### Criando um novo módulo
+
+Use a mesma chave para a pasta da aplicação, a pasta de conteúdo e o registro do módulo. Por exemplo, para criar o módulo `redes`:
+
+```text
+app/redes/fundamentos/page.tsx
+content/redes/modelo-osi.md
+config/modules.ts
+```
+
+As notas em `content/redes/` são descobertas automaticamente. Para exibir páginas TSX no topo do sidebar, registre o módulo e suas páginas em `config/modules.ts`:
+
+```ts
+redes: {
+  key: "redes",
+  name: "Redes de Computadores",
+  icon: Network,
+  color: "text-sky-400",
+  badgeColor: "bg-sky-500/10 text-sky-300 border-sky-500/30",
+  borderColor: "border-sky-500/40",
+  pages: [
+    {
+      title: "Fundamentos de Redes",
+      href: "/redes/fundamentos",
+      badge: "Redes",
+    },
+  ],
+},
+```
+
+No sidebar, as páginas TSX ficam na seção superior **Páginas**, enquanto as notas Markdown permanecem na seção inferior **Notas**.
+
 ---
 
 ## ⚙️ Comandos de Desenvolvimento
